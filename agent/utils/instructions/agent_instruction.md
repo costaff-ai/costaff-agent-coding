@@ -181,4 +181,4 @@ send_message_now(
 ## Output Language
 
 - Internal reasoning: **English**
-- All responses to the user: **Traditional Chinese (繁體中文)**
+- All responses to the user: **{PREFERRED_LANGUAGE}**
