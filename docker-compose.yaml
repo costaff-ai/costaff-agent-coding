@@ -6,7 +6,7 @@ services:
     environment:
       - PORT=8081
       - PUBLIC_HOST=coding-agent
-      - MCP_CODING_URL=http://mcp-coding:8082/sse
+      - MCP_CODING_URL=http://mcp-coding:8082/mcp
       - CODING_WORKSPACE_DIR=/app/data/coding_workspace
       - MATECLAW_AGENT_MODEL_PROVIDER=${MATECLAW_AGENT_MODEL_PROVIDER:-gemini}
       - CODING_AGENT_MODEL=${CODING_AGENT_MODEL:-gemini-2.5-flash}
@@ -24,7 +24,6 @@ services:
       context: ./mcp
     restart: on-failure
     environment:
-      - MCP_TRANSPORT=sse
       - MCP_CODING_PORT=8082
       - CODING_WORKSPACE_DIR=/app/data/coding_workspace
       - ALLOW_PIP_INSTALL=${ALLOW_PIP_INSTALL:-true}

@@ -10,27 +10,24 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import SseServerParams, StreamableHTTPServerParams
+from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 from utils.instructions import AGENT_INSTRUCTION
 
 WORKSPACE_DIR = os.getenv("CODING_WORKSPACE_DIR", "/app/data/coding_workspace")
 
 def get_connection_params(entry):
     if isinstance(entry, str):
-        url, headers, transport = entry, None, "sse" if "/sse" in entry else "streamable"
+        url, headers = entry, None
     else:
-        url       = entry.get("url", "")
-        headers   = entry.get("headers") or None
-        transport = entry.get("transport", "streamable")
+        url     = entry.get("url", "")
+        headers = entry.get("headers") or None
     if not url:
         raise ValueError("MCP entry has no URL")
-    if transport == "sse" or "/sse" in url:
-        return SseServerParams(url=url, headers=headers)
-    return StreamableHTTPServerParams(url=url, headers=headers)
+    return StreamableHTTPServerParams(url=url, headers=headers or {})
 
 # Own MCP — always connected
-MCP_CODING_URL = os.getenv("MCP_CODING_URL", "http://mcp-coding:8082/sse")
-tools = [McpToolset(connection_params=SseServerParams(url=MCP_CODING_URL))]
+MCP_CODING_URL = os.getenv("MCP_CODING_URL", "http://mcp-coding:8082/mcp")
+tools = [McpToolset(connection_params=StreamableHTTPServerParams(url=MCP_CODING_URL))]
 logger.info(f"Coding MCP URL: {MCP_CODING_URL}")
 
 # Additional MCPs configured via mateclaw dashboard (CODING_AGENT_MCP_URLS)
@@ -74,7 +71,14 @@ instruction = (
 coding_agent = LlmAgent(
     name="coding_agent",
     model=selected_model,
-    description="寫程式並執行來解決需要計算、資料處理或程式邏輯的問題，回傳執行結果與產生的檔案路徑。",
+    description=(
+        "A senior software engineer agent that writes and executes code inside a secure "
+        "sandboxed workspace (/app/data/coding_workspace). "
+        "Capable of: end-to-end Python project development; installing packages; running scripts; "
+        "testing and linting; producing output files (.py, .json, .csv, .txt, etc.). "
+        "For tasks requiring charts or PDF reports, saves structured results (.json/.csv) "
+        "so the viz-report agent can generate the final report."
+    ),
     instruction=instruction,
     tools=tools,
 )

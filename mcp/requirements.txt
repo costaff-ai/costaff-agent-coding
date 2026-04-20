@@ -1,3 +1,5 @@
 mcp[cli]
 fastmcp
 matplotlib
+ruff
+black
