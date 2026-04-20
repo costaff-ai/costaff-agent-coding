@@ -26,8 +26,15 @@ def get_connection_params(entry):
     return StreamableHTTPServerParams(url=url, headers=headers or {})
 
 # Own MCP — always connected
-MCP_CODING_URL = os.getenv("MCP_CODING_URL", "http://mcp-coding:8082/mcp")
-tools = [McpToolset(connection_params=StreamableHTTPServerParams(url=MCP_CODING_URL))]
+mcp_token = os.getenv("MCP_SECRET_KEY", "REDACTED")
+MCP_CODING_URL = os.getenv("MCP_CODING_URL", "http://costaff-ext-coding-agent-mcp-coding:8082/mcp")
+
+mcp_params = StreamableHTTPServerParams(
+    url=MCP_CODING_URL, 
+    headers={"Authorization": f"Bearer {mcp_token}"}
+)
+
+tools = [McpToolset(connection_params=mcp_params)]
 logger.info(f"Coding MCP URL: {MCP_CODING_URL}")
 
 # Additional MCPs configured via CoStaff dashboard (CODING_AGENT_MCP_URLS)
