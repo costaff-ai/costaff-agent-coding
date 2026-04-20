@@ -2,7 +2,7 @@ services:
   coding-agent:
     build:
       context: ./agent
-    container_name: costaff-coding-agent
+    container_name: costaff-agent-coding
     restart: on-failure
     environment:
       - PORT=8081

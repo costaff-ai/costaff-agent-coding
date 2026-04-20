@@ -8,17 +8,21 @@
     "GOOGLE_API_KEY"
   ],
   "env_optional": [
-    "CODING_AGENT_MODEL",
+    "GIT_TOKEN",
+    "GIT_AUTHOR_NAME",
+    "GIT_AUTHOR_EMAIL"
+  ],
+  "env_shared": [
+    "GOOGLE_API_KEY",
     "COSTAFF_AGENT_MODEL_PROVIDER",
     "LITELLM_MODEL_NAME",
     "LITELLM_API_BASE",
-    "LITELLM_API_KEY",
-    "CODING_AGENT_MCP_URLS",
-    "GIT_TOKEN",
-    "GIT_AUTHOR_NAME",
-    "GIT_AUTHOR_EMAIL",
-    "COSTAFF_PREFERRED_LANGUAGE"
+    "LITELLM_API_KEY"
   ],
+  "env_auto": [
+    "CODING_AGENT_MCP_URLS"
+  ],
+  "model_env_var": "CODING_AGENT_MODEL",
   "health_path": "/.well-known/agent.json",
   "costaff_sdk_version": ">=0.2.0",
   "mcp_configurable": true,

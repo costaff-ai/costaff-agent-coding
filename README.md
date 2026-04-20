@@ -5,13 +5,13 @@
 [![MCP](https://img.shields.io/badge/MCP-enabled-green.svg)](https://modelcontextprotocol.io/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 [![A2A Protocol](https://img.shields.io/badge/A2A-protocol-violet.svg)](https://github.com/google/A2A)
-[![costaff.agent.json](https://img.shields.io/badge/costaff-compatible-blue.svg)](https://github.com/CoStaffAI/costaff)
+[![costaff.agent.json](https://img.shields.io/badge/costaff-compatible-blue.svg)](https://github.com/costaff-ai/costaff)
 
 [繁體中文](./README_zhtw.md) | **English**
 
 **CoStaff Coding Agent** is a sandboxed code execution agent built on **Google ADK** and the **A2A protocol**. It specialises in writing and running Python code to solve computation, data processing, and logic problems — returning results and file paths to the orchestrating agent.
 
-Designed as a first-party external agent for the [CoStaff](https://github.com/CoStaffAI/costaff) platform, it can also run standalone or integrate with any A2A-compatible system.
+Designed as a first-party external agent for the [CoStaff](https://github.com/costaff-ai/costaff) platform, it can also run standalone or integrate with any A2A-compatible system.
 
 ---
 
@@ -45,7 +45,7 @@ Coding Agent  ──►  MCP Coding Server  ──►  Sandboxed Python Runtime
 1. The CoStaff Agent delegates computation tasks via **A2A protocol**
 2. The Coding Agent writes Python code and executes it through the **MCP Coding Server**
 3. Results (`.json`, `.csv`, `.txt`, `.py`) are saved to the shared `/app/data/coding_workspace/` volume
-4. File paths are returned to the calling agent for downstream use (e.g. by `costaff-viz-report-agent`)
+4. File paths are returned to the calling agent for downstream use (e.g. by `costaff-agent-viz-report`)
 
 ---
 
@@ -63,7 +63,7 @@ Coding Agent  ──►  MCP Coding Server  ──►  Sandboxed Python Runtime
 ## Architecture
 
 ```
-costaff-coding-agent/
+costaff-agent-coding/
 ├── agent/                    # ADK agent definition
 │   ├── agent.py              # LlmAgent with dynamic MCP loading
 │   ├── utils/
@@ -89,8 +89,8 @@ costaff-coding-agent/
 
 ```bash
 # Clone
-git clone https://github.com/CoStaffAI/costaff-coding-agent.git
-cd costaff-coding-agent
+git clone https://github.com/costaff-ai/costaff-agent-coding.git
+cd costaff-agent-coding
 
 # Configure
 cp agent/.env.example agent/.env
@@ -107,7 +107,7 @@ The agent will be available at `http://localhost:8081`.
 Deploy directly from the CoStaff CLI:
 
 ```bash
-cst agent deploy --local /path/to/costaff-coding-agent
+cst agent deploy --local /path/to/costaff-agent-coding
 ```
 
 CoStaff will read `costaff.agent.json`, build and start the containers, register the agent, and wire it into the ecosystem automatically.
@@ -249,7 +249,7 @@ The agent outputs:
 
 Supported output file types: `.json`, `.csv`, `.txt`, `.py`
 
-> The agent does **not** generate charts, HTML reports, or PDFs. Visual output is handled by [`costaff-viz-report-agent`](https://github.com/CoStaffAI/costaff-viz-report-agent).
+> The agent does **not** generate charts, HTML reports, or PDFs. Visual output is handled by [`costaff-agent-viz-report`](https://github.com/costaff-ai/costaff-agent-viz-report).
 
 ---
 
