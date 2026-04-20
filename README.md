@@ -206,7 +206,7 @@ The token is injected into the HTTPS remote URL at call time (`https://<token>@g
 
 The Coding Agent always connects to its own **MCP Coding Server** for sandboxed execution.
 
-Additional MCPs (e.g. databases, search APIs, internal tools) can be assigned dynamically from the **CoStaff dashboard** under `Agents → coding-agent → MCP Extensions → Apply & Restart` — no redeployment needed.
+Additional MCPs (e.g. databases, search APIs, internal tools) can be assigned dynamically from the **CoStaff dashboard** under `Agents → costaff-agent-coding → MCP Extensions → Apply & Restart` — no redeployment needed.
 
 The extra MCPs are passed via the `CODING_AGENT_MCP_URLS` environment variable as a JSON dict:
 
@@ -228,7 +228,7 @@ This manifest file declares the agent's identity and capabilities to the CoStaff
 
 ```json
 {
-  "name": "coding-agent",
+  "name": "costaff-agent-coding",
   "version": "1.0.0",
   "description": "Writes and executes code to solve computation, data processing, or logic problems. Returns execution results and generated file paths.",
   "a2a_service": "agent-coding",

@@ -206,7 +206,7 @@ Token 僅在操作當下注入 HTTPS 遠端 URL（`https://<token>@github.com/..
 
 Coding Agent 預設連接自身的 **MCP Coding Server** 進行沙盒執行。
 
-額外的 MCP（如資料庫、搜尋 API、內部工具）可從 **CoStaff Dashboard** 動態指派：`Agents → coding-agent → MCP Extensions → Apply & Restart`，無需重新部署。
+額外的 MCP（如資料庫、搜尋 API、內部工具）可從 **CoStaff Dashboard** 動態指派：`Agents → costaff-agent-coding → MCP Extensions → Apply & Restart`，無需重新部署。
 
 額外 MCP 透過 `CODING_AGENT_MCP_URLS` 環境變數以 JSON dict 格式傳入：
 
@@ -228,7 +228,7 @@ Coding Agent 預設連接自身的 **MCP Coding Server** 進行沙盒執行。
 
 ```json
 {
-  "name": "coding-agent",
+  "name": "costaff-agent-coding",
   "version": "1.0.0",
   "description": "寫程式並執行來解決需要計算、資料處理或程式邏輯的問題，回傳執行結果與產生的檔案路徑。",
   "a2a_service": "agent-coding",
