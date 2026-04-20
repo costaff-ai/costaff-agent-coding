@@ -173,7 +173,7 @@ GIT_AUTHOR_EMAIL=agent@mycompany.com
 **第三步 — 重新 build MCP 容器**
 
 ```bash
-docker compose up -d --build costaff-coding-agent-mcp-coding
+docker compose up -d --build costaff-mcp-coding
 ```
 
 ### Push/Pull 的運作方式
