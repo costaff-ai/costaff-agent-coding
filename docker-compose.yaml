@@ -29,6 +29,9 @@ services:
       - MCP_CODING_PORT=8082
       - CODING_WORKSPACE_DIR=/app/data/coding_workspace
       - ALLOW_PIP_INSTALL=${ALLOW_PIP_INSTALL:-true}
+      - GIT_TOKEN=${GIT_TOKEN:-}
+      - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-Coding Agent}
+      - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-agent@costaff.ai}
     volumes:
       - coding_data:/app/data
 

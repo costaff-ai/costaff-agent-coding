@@ -15,7 +15,9 @@ agent_card = AgentCard(
     url=f"http://{PUBLIC_HOST}:{PORT}",
     description=coding_agent.description,
     version="1.0.0",
-    capabilities={},
+    capabilities={
+        "display_name": "AI 程式撰寫人員"
+    },
     skills=[],
     default_input_modes=["text/plain"],
     default_output_modes=["text/plain"],

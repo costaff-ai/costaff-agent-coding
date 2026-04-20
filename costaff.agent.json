@@ -13,7 +13,10 @@
     "LITELLM_MODEL_NAME",
     "LITELLM_API_BASE",
     "LITELLM_API_KEY",
-    "CODING_AGENT_MCP_URLS"
+    "CODING_AGENT_MCP_URLS",
+    "GIT_TOKEN",
+    "GIT_AUTHOR_NAME",
+    "GIT_AUTHOR_EMAIL"
   ],
   "health_path": "/.well-known/agent.json",
   "costaff_sdk_version": ">=0.2.0",
