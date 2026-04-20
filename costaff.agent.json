@@ -1,7 +1,7 @@
 {
   "name": "costaff-agent-coding",
   "version": "1.0.0",
-  "description": "專業的程式開發與邏輯專家。負責編寫程式、處理數據運算、修復 CSV 並產出原始數據檔案。限制：執行環境僅支援基礎字體，產出的 PDF 或圖表無法顯示多國語言（如中文），請務必將此類視覺化任務交由專業報告專家處理。",
+  "description": "[專長] 程式開發與邏輯運算。[能力] 編寫 Python 程式、處理數據運算、修復 CSV 與資料清洗。[限制] 執行環境僅具備基礎系統字體，產出的 PDF/圖表無法顯示多國語言（如中文），必須將此類視覺化任務交由專業報告專家處理。[產出] 檔案、程式碼或者程式碼運行結果。",
   "a2a_service": "agent-coding",
   "port": 8081,
   "env_required": [
@@ -28,3 +28,4 @@
   "mcp_configurable": true,
   "mcp_env_var": "CODING_AGENT_MCP_URLS"
 }
+
