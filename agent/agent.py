@@ -27,7 +27,7 @@ def get_connection_params(entry):
 
 # Own MCP — always connected
 mcp_token = os.getenv("MCP_SECRET_KEY", "REDACTED")
-MCP_CODING_URL = os.getenv("MCP_CODING_URL", "http://costaff-ext-coding-agent-mcp-coding:8082/mcp")
+MCP_CODING_URL = os.getenv("MCP_CODING_URL", "http://costaff-coding-agent-mcp-coding:8082/mcp")
 
 mcp_params = StreamableHTTPServerParams(
     url=MCP_CODING_URL, 

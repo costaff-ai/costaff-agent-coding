@@ -173,7 +173,7 @@ GIT_AUTHOR_EMAIL=agent@mycompany.com
 **Step 3 — Rebuild the MCP container**
 
 ```bash
-docker compose up -d --build costaff-ext-coding-agent-mcp-coding
+docker compose up -d --build costaff-coding-agent-mcp-coding
 ```
 
 ### How push/pull works
