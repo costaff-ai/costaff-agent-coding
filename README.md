@@ -231,7 +231,7 @@ This manifest file declares the agent's identity and capabilities to the CoStaff
   "name": "coding-agent",
   "version": "1.0.0",
   "description": "Writes and executes code to solve computation, data processing, or logic problems. Returns execution results and generated file paths.",
-  "a2a_service": "coding-agent",
+  "a2a_service": "agent-coding",
   "port": 8081,
   "env_required": ["GOOGLE_API_KEY"],
   "mcp_configurable": true,

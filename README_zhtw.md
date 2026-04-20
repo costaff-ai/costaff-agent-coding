@@ -231,7 +231,7 @@ Coding Agent 預設連接自身的 **MCP Coding Server** 進行沙盒執行。
   "name": "coding-agent",
   "version": "1.0.0",
   "description": "寫程式並執行來解決需要計算、資料處理或程式邏輯的問題，回傳執行結果與產生的檔案路徑。",
-  "a2a_service": "coding-agent",
+  "a2a_service": "agent-coding",
   "port": 8081,
   "env_required": ["GOOGLE_API_KEY"],
   "mcp_configurable": true,
