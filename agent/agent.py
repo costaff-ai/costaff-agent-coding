@@ -30,7 +30,7 @@ MCP_CODING_URL = os.getenv("MCP_CODING_URL", "http://mcp-coding:8082/mcp")
 tools = [McpToolset(connection_params=StreamableHTTPServerParams(url=MCP_CODING_URL))]
 logger.info(f"Coding MCP URL: {MCP_CODING_URL}")
 
-# Additional MCPs configured via mateclaw dashboard (CODING_AGENT_MCP_URLS)
+# Additional MCPs configured via CoStaff dashboard (CODING_AGENT_MCP_URLS)
 raw_extra = os.getenv("CODING_AGENT_MCP_URLS", "")
 if raw_extra:
     try:
@@ -47,7 +47,7 @@ if raw_extra:
     except json.JSONDecodeError:
         logger.error("CODING_AGENT_MCP_URLS is not valid JSON, skipping extra MCPs")
 
-model_provider = os.getenv("MATECLAW_AGENT_MODEL_PROVIDER", "gemini").lower()
+model_provider = os.getenv("COSTAFF_AGENT_MODEL_PROVIDER", "gemini").lower()
 model_name = os.getenv("CODING_AGENT_MODEL", "gemini-2.5-flash")
 
 if model_provider == "litellm":

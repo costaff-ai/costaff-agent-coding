@@ -9,14 +9,14 @@
   ],
   "env_optional": [
     "CODING_AGENT_MODEL",
-    "MATECLAW_AGENT_MODEL_PROVIDER",
+    "COSTAFF_AGENT_MODEL_PROVIDER",
     "LITELLM_MODEL_NAME",
     "LITELLM_API_BASE",
     "LITELLM_API_KEY",
     "CODING_AGENT_MCP_URLS"
   ],
   "health_path": "/.well-known/agent.json",
-  "mateclaw_sdk_version": ">=0.2.0",
+  "costaff_sdk_version": ">=0.2.0",
   "mcp_configurable": true,
   "mcp_env_var": "CODING_AGENT_MCP_URLS"
 }

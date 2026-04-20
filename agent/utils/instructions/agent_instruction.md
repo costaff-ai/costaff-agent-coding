@@ -164,7 +164,7 @@ send_message_now(
     user_id="<user_id from PROGRESS_CONTEXT>",
     recipient="<user_id from PROGRESS_CONTEXT>",
     channel="<channel from PROGRESS_CONTEXT>",
-    app_name="mateclaw_agent",
+    app_name="costaff_agent",
     session_id="<session_id from PROGRESS_CONTEXT>",
     body="🔍 正在調查專案結構..."
 )

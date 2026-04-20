@@ -2,13 +2,14 @@ services:
   coding-agent:
     build:
       context: ./agent
+    container_name: costaff-coding-agent
     restart: on-failure
     environment:
       - PORT=8081
       - PUBLIC_HOST=coding-agent
       - MCP_CODING_URL=http://mcp-coding:8082/mcp
       - CODING_WORKSPACE_DIR=/app/data/coding_workspace
-      - MATECLAW_AGENT_MODEL_PROVIDER=${MATECLAW_AGENT_MODEL_PROVIDER:-gemini}
+      - COSTAFF_AGENT_MODEL_PROVIDER=${COSTAFF_AGENT_MODEL_PROVIDER:-gemini}
       - CODING_AGENT_MODEL=${CODING_AGENT_MODEL:-gemini-2.5-flash}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - LITELLM_MODEL_NAME=${LITELLM_MODEL_NAME:-}
@@ -22,6 +23,7 @@ services:
   mcp-coding:
     build:
       context: ./mcp
+    container_name: costaff-mcp-coding
     restart: on-failure
     environment:
       - MCP_CODING_PORT=8082

@@ -1,17 +1,17 @@
-# Mateclaw Coding Agent
+# CoStaff Coding Agent
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Google ADK](https://img.shields.io/badge/Google%20ADK-latest-orange.svg)](https://github.com/google/adk-python)
 [![MCP](https://img.shields.io/badge/MCP-enabled-green.svg)](https://modelcontextprotocol.io/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 [![A2A Protocol](https://img.shields.io/badge/A2A-protocol-violet.svg)](https://github.com/google/A2A)
-[![mateclaw.agent.json](https://img.shields.io/badge/mateclaw-compatible-blue.svg)](https://github.com/MateClawAI/mateclaw)
+[![costaff.agent.json](https://img.shields.io/badge/costaff-compatible-blue.svg)](https://github.com/CoStaffAI/costaff)
 
 [繁體中文](./README_zhtw.md) | **English**
 
-**Mateclaw Coding Agent** is a sandboxed code execution agent built on **Google ADK** and the **A2A protocol**. It specialises in writing and running Python code to solve computation, data processing, and logic problems — returning results and file paths to the orchestrating agent.
+**CoStaff Coding Agent** is a sandboxed code execution agent built on **Google ADK** and the **A2A protocol**. It specialises in writing and running Python code to solve computation, data processing, and logic problems — returning results and file paths to the orchestrating agent.
 
-Designed as a first-party external agent for the [Mateclaw](https://github.com/MateClawAI/mateclaw) platform, it can also run standalone or integrate with any A2A-compatible system.
+Designed as a first-party external agent for the [CoStaff](https://github.com/CoStaffAI/costaff) platform, it can also run standalone or integrate with any A2A-compatible system.
 
 ---
 
@@ -22,8 +22,9 @@ Designed as a first-party external agent for the [Mateclaw](https://github.com/M
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
+- [Git Tools](#git-tools)
 - [MCP Extensions](#mcp-extensions)
-- [mateclaw.agent.json](#mateclawagentjson)
+- [costaff.agent.json](#costaffagentjson)
 - [Output Format](#output-format)
 - [License](#license)
 
@@ -32,7 +33,7 @@ Designed as a first-party external agent for the [Mateclaw](https://github.com/M
 ## How It Works
 
 ```
-Mateclaw Agent
+CoStaff Agent
      │
      │  A2A Protocol (/.well-known/agent.json)
      ▼
@@ -41,10 +42,10 @@ Coding Agent  ──►  MCP Coding Server  ──►  Sandboxed Python Runtime
                         └──►  /app/data/coding_workspace/
 ```
 
-1. The Mateclaw Agent delegates computation tasks via **A2A protocol**
+1. The CoStaff Agent delegates computation tasks via **A2A protocol**
 2. The Coding Agent writes Python code and executes it through the **MCP Coding Server**
 3. Results (`.json`, `.csv`, `.txt`, `.py`) are saved to the shared `/app/data/coding_workspace/` volume
-4. File paths are returned to the calling agent for downstream use (e.g. by `mateclaw-viz-report-agent`)
+4. File paths are returned to the calling agent for downstream use (e.g. by `costaff-viz-report-agent`)
 
 ---
 
@@ -52,17 +53,17 @@ Coding Agent  ──►  MCP Coding Server  ──►  Sandboxed Python Runtime
 
 - **Sandboxed Python execution** via dedicated MCP server — code runs in isolation
 - **A2A-compatible** — exposes `/.well-known/agent.json` health endpoint
-- **Dynamic MCP support** — additional MCP servers can be assigned at runtime from the Mateclaw dashboard without redeployment
+- **Dynamic MCP support** — additional MCP servers can be assigned at runtime from the CoStaff dashboard without redeployment
 - **Multi-model support** — works with Google Gemini natively or any LiteLLM-compatible provider
 - **Shared volume integration** — output files accessible to other agents in the same ecosystem
-- **mateclaw.agent.json manifest** — declares capabilities, env requirements, and MCP configurability for Mateclaw platform discovery
+- **costaff.agent.json manifest** — declares capabilities, env requirements, and MCP configurability for CoStaff platform discovery
 
 ---
 
 ## Architecture
 
 ```
-mateclaw-coding-agent/
+costaff-coding-agent/
 ├── agent/                    # ADK agent definition
 │   ├── agent.py              # LlmAgent with dynamic MCP loading
 │   ├── utils/
@@ -72,7 +73,7 @@ mateclaw-coding-agent/
 │   ├── server.py             # FastMCP server exposing code execution tools
 │   └── requirements.txt
 ├── docker-compose.yaml       # Standalone deployment
-└── mateclaw.agent.json       # Mateclaw platform manifest
+└── costaff.agent.json       # CoStaff platform manifest
 ```
 
 ---
@@ -88,8 +89,8 @@ mateclaw-coding-agent/
 
 ```bash
 # Clone
-git clone https://github.com/MateClawAI/mateclaw-coding-agent.git
-cd mateclaw-coding-agent
+git clone https://github.com/CoStaffAI/costaff-coding-agent.git
+cd costaff-coding-agent
 
 # Configure
 cp agent/.env.example agent/.env
@@ -101,15 +102,15 @@ docker compose up -d --build
 
 The agent will be available at `http://localhost:8081`.
 
-### Via Mateclaw Platform
+### Via CoStaff Platform
 
-Deploy directly from the Mateclaw CLI:
+Deploy directly from the CoStaff CLI:
 
 ```bash
-mateclaw agent deploy --local /path/to/mateclaw-coding-agent
+cst agent deploy --local /path/to/costaff-coding-agent
 ```
 
-Mateclaw will read `mateclaw.agent.json`, build and start the containers, register the agent, and wire it into the ecosystem automatically.
+CoStaff will read `costaff.agent.json`, build and start the containers, register the agent, and wire it into the ecosystem automatically.
 
 ---
 
@@ -119,13 +120,85 @@ Mateclaw will read `mateclaw.agent.json`, build and start the containers, regist
 |----------|----------|---------|-------------|
 | `GOOGLE_API_KEY` | ✅ | — | Google Gemini API key |
 | `CODING_AGENT_MODEL` | ❌ | `gemini-2.5-flash` | Model name for Gemini provider |
-| `MATECLAW_AGENT_MODEL_PROVIDER` | ❌ | `gemini` | `gemini` or `litellm` |
+| `COSTAFF_AGENT_MODEL_PROVIDER` | ❌ | `gemini` | `gemini` or `litellm` |
 | `LITELLM_MODEL_NAME` | ❌ | — | Model name for LiteLLM provider |
 | `LITELLM_API_BASE` | ❌ | — | LiteLLM API base URL |
 | `LITELLM_API_KEY` | ❌ | — | LiteLLM API key |
 | `MCP_CODING_URL` | ❌ | `http://mcp-coding:8082/sse` | Internal MCP Coding Server URL |
 | `CODING_WORKSPACE_DIR` | ❌ | `/app/data/coding_workspace` | Shared output directory |
-| `CODING_AGENT_MCP_URLS` | ❌ | — | JSON dict of extra MCP servers (set via Mateclaw dashboard) |
+| `CODING_AGENT_MCP_URLS` | ❌ | — | JSON dict of extra MCP servers (set via CoStaff dashboard) |
+| `GIT_TOKEN` | ❌ | — | Personal Access Token for git push/pull over HTTPS |
+| `GIT_AUTHOR_NAME` | ❌ | `Coding Agent` | Commit author name |
+| `GIT_AUTHOR_EMAIL` | ❌ | `agent@costaff.ai` | Commit author email |
+
+---
+
+## Git Tools
+
+The MCP Coding Server includes a built-in `git.py` tool module that exposes version-control operations to the agent.
+
+### Available tools
+
+| Tool | Description |
+|------|-------------|
+| `git_init` | Initialise a new repository in the workspace |
+| `git_status` | Show working-tree status |
+| `git_add` | Stage files for commit |
+| `git_commit` | Commit staged changes |
+| `git_log` | Show recent commit history |
+| `git_diff` | Show unstaged or staged diff |
+| `git_branch` | List local branches |
+| `git_checkout` | Switch to or create a branch |
+| `git_clone` | Clone a remote repository into the workspace |
+| `git_push` | Push commits to remote (**requires `GIT_TOKEN`**) |
+| `git_pull` | Pull changes from remote (**requires `GIT_TOKEN`**) |
+
+### Configuration
+
+**Step 1 — Generate a Personal Access Token**
+
+- **GitHub**: Settings → Developer settings → Personal access tokens → Fine-grained tokens
+  - Required scopes: `Contents: Read and Write`, `Metadata: Read`
+- **GitLab**: User settings → Access Tokens → `write_repository` scope
+
+**Step 2 — Add to `.env`**
+
+```env
+# Git credentials
+GIT_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GIT_AUTHOR_NAME=My Agent
+GIT_AUTHOR_EMAIL=agent@mycompany.com
+```
+
+**Step 3 — Rebuild the MCP container**
+
+```bash
+docker compose up -d --build costaff-ext-coding-agent-mcp-coding
+```
+
+### How push/pull works
+
+The token is injected into the HTTPS remote URL at call time (`https://<token>@github.com/...`) and removed immediately after the operation completes, so it is never persisted to the repository config.
+
+> **SSH remotes**: SSH clones and push/pull work without `GIT_TOKEN` if you mount your SSH key into the container:
+> ```yaml
+> # In compose-fragment.yaml or docker-compose.yaml
+> volumes:
+>   - ~/.ssh:/root/.ssh:ro
+> ```
+
+### Example agent conversation
+
+```
+# Clone a project into the workspace
+"幫我 clone https://github.com/myorg/ledger-app 到 workspace"
+
+# Write code, then commit
+"建立 src/transactions.py，實作 CRUD，然後 commit，訊息寫 'feat: add transaction CRUD'"
+
+# Push to GitHub
+"把剛才的 commit push 到 origin main"
+```
 
 ---
 
@@ -133,7 +206,7 @@ Mateclaw will read `mateclaw.agent.json`, build and start the containers, regist
 
 The Coding Agent always connects to its own **MCP Coding Server** for sandboxed execution.
 
-Additional MCPs (e.g. databases, search APIs, internal tools) can be assigned dynamically from the **Mateclaw dashboard** under `Agents → coding-agent → MCP Extensions → Apply & Restart` — no redeployment needed.
+Additional MCPs (e.g. databases, search APIs, internal tools) can be assigned dynamically from the **CoStaff dashboard** under `Agents → coding-agent → MCP Extensions → Apply & Restart` — no redeployment needed.
 
 The extra MCPs are passed via the `CODING_AGENT_MCP_URLS` environment variable as a JSON dict:
 
@@ -149,9 +222,9 @@ The extra MCPs are passed via the `CODING_AGENT_MCP_URLS` environment variable a
 
 ---
 
-## mateclaw.agent.json
+## costaff.agent.json
 
-This manifest file declares the agent's identity and capabilities to the Mateclaw platform:
+This manifest file declares the agent's identity and capabilities to the CoStaff platform:
 
 ```json
 {
@@ -176,7 +249,7 @@ The agent outputs:
 
 Supported output file types: `.json`, `.csv`, `.txt`, `.py`
 
-> The agent does **not** generate charts, HTML reports, or PDFs. Visual output is handled by [`mateclaw-viz-report-agent`](https://github.com/MateClawAI/mateclaw-viz-report-agent).
+> The agent does **not** generate charts, HTML reports, or PDFs. Visual output is handled by [`costaff-viz-report-agent`](https://github.com/CoStaffAI/costaff-viz-report-agent).
 
 ---
 
