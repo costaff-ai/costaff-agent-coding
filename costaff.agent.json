@@ -1,7 +1,7 @@
 {
   "name": "costaff-agent-coding",
   "version": "1.0.0",
-  "description": "寫程式並執行來解決需要計算、資料處理或程式邏輯的問題，回傳執行結果與產生的檔案路徑。",
+  "description": "專業的程式開發與邏輯專家。負責編寫程式、處理數據運算、修復 CSV 並產出原始數據檔案。限制：執行環境僅支援基礎字體，產出的 PDF 或圖表無法顯示多國語言（如中文），請務必將此類視覺化任務交由專業報告專家處理。",
   "a2a_service": "agent-coding",
   "port": 8081,
   "env_required": [
