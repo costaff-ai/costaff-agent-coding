@@ -124,7 +124,7 @@ CoStaff will read `costaff.agent.json`, build and start the containers, register
 | `LITELLM_MODEL_NAME` | ❌ | — | Model name for LiteLLM provider |
 | `LITELLM_API_BASE` | ❌ | — | LiteLLM API base URL |
 | `LITELLM_API_KEY` | ❌ | — | LiteLLM API key |
-| `MCP_CODING_URL` | ❌ | `http://mcp-coding:8082/sse` | Internal MCP Coding Server URL |
+| `MCP_CODING_URL` | ❌ | `http://costaff-mcp-coding:8082/mcp` | Internal MCP Coding Server URL |
 | `CODING_WORKSPACE_DIR` | ❌ | `/app/data/coding_workspace` | Shared output directory |
 | `CODING_AGENT_MCP_URLS` | ❌ | — | JSON dict of extra MCP servers (set via CoStaff dashboard) |
 | `GIT_TOKEN` | ❌ | — | Personal Access Token for git push/pull over HTTPS |

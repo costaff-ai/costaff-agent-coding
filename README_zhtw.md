@@ -124,7 +124,7 @@ CoStaff 會讀取 `costaff.agent.json`，自動建立容器、註冊 Agent，並
 | `LITELLM_MODEL_NAME` | ❌ | — | LiteLLM 模型名稱 |
 | `LITELLM_API_BASE` | ❌ | — | LiteLLM API Base URL |
 | `LITELLM_API_KEY` | ❌ | — | LiteLLM API Key |
-| `MCP_CODING_URL` | ❌ | `http://mcp-coding:8082/sse` | 內部 MCP Coding Server URL |
+| `MCP_CODING_URL` | ❌ | `http://costaff-mcp-coding:8082/mcp` | 內部 MCP Coding Server URL |
 | `CODING_WORKSPACE_DIR` | ❌ | `/app/data/coding_workspace` | 共享輸出目錄 |
 | `CODING_AGENT_MCP_URLS` | ❌ | — | 額外 MCP Server 的 JSON 設定（由 CoStaff Dashboard 管理） |
 | `GIT_TOKEN` | ❌ | — | HTTPS 推送/拉取用的 Personal Access Token |
