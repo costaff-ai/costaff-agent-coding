@@ -13,7 +13,7 @@ from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 from utils.instructions import AGENT_INSTRUCTION
 
-WORKSPACE_DIR = os.getenv("CODING_WORKSPACE_DIR", "/app/data/coding_workspace")
+WORKSPACE_DIR = os.getenv("AGENT_CODING_WORKSPACE_DIR", "/app/data/agent-coding")
 
 def get_connection_params(entry):
     if isinstance(entry, str):
@@ -81,8 +81,8 @@ coding_agent = LlmAgent(
     name="coding_agent",
     model=selected_model,
     description=(
-        "A senior software engineer agent that writes and executes code inside a secure "
-        "sandboxed workspace (/app/data/coding_workspace). "
+        f"A senior software engineer agent that writes and executes code inside a secure "
+        f"sandboxed workspace ({WORKSPACE_DIR}). "
         "Capable of: end-to-end Python project development; installing packages; running scripts; "
         "testing and linting; producing output files (.py, .json, .csv, .txt, etc.). "
         "For tasks requiring charts or PDF reports, saves structured results (.json/.csv) "

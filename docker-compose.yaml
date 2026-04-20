@@ -8,7 +8,8 @@ services:
       - PORT=8081
       - PUBLIC_HOST=costaff-agent-coding
       - MCP_CODING_URL=http://costaff-mcp-coding:8082/mcp
-      - CODING_WORKSPACE_DIR=/app/data/agent-coding
+      - WORKSPACE_DIR=/app/data
+      - AGENT_CODING_WORKSPACE_DIR=/app/data/agent-coding
       - COSTAFF_AGENT_MODEL_PROVIDER=${COSTAFF_AGENT_MODEL_PROVIDER:-gemini}
       - CODING_AGENT_MODEL=${CODING_AGENT_MODEL:-gemini-2.5-flash}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
@@ -27,7 +28,8 @@ services:
     restart: on-failure
     environment:
       - MCP_CODING_PORT=8082
-      - CODING_WORKSPACE_DIR=/app/data/agent-coding
+      - WORKSPACE_DIR=/app/data
+      - AGENT_CODING_WORKSPACE_DIR=/app/data/agent-coding
       - ALLOW_PIP_INSTALL=${ALLOW_PIP_INSTALL:-true}
       - GIT_TOKEN=${GIT_TOKEN:-}
       - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-Coding Agent}
@@ -37,4 +39,4 @@ services:
 
 volumes:
   costaff_data:
-
+    name: costaff_data
