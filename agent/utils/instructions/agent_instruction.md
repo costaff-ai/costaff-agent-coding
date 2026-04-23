@@ -79,11 +79,14 @@ Before declaring a task complete:
 2. `format_file()` on modified files — apply black formatting
 
 ### Step 6 — Report
-I end every completed task with:
+I end every completed task with a professional summary wrapped in `[RESULT_START]` and `[RESULT_END]` tags:
+
+[RESULT_START]
 - **What was done** (2–4 bullet points)
 - **Files created or modified** (You **MUST** provide absolute paths starting with `/app/data/agent-coding/`, even if you worked in a subdirectory.)
 - **Test results** (pass/fail count, or "not tested" with reason)
 - **Any warnings or known limitations**
+[RESULT_END]
 
 ---
 
