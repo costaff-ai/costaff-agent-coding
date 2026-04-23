@@ -1,11 +1,11 @@
 import os
 import uvicorn
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
-from a2a.types import AgentCard
+from a2a.types import AgentCard, AgentCapabilities
 from agent import coding_agent
 
 PORT = int(os.getenv("PORT", "8081"))
-PUBLIC_HOST = os.getenv("PUBLIC_HOST", "localhost")
+PUBLIC_HOST = os.getenv("PUBLIC_HOST", "costaff-agent-coding")
 
 # Provide a minimal agent card with only the agent-level description.
 # Omitting individual tool skills prevents the parent agent from seeing
@@ -15,9 +15,10 @@ agent_card = AgentCard(
     url=f"http://{PUBLIC_HOST}:{PORT}",
     description=coding_agent.description,
     version="1.0.0",
-    capabilities={
-        "display_name": "AI 程式撰寫人員"
-    },
+    capabilities=AgentCapabilities(
+        streaming=False,
+        push_notifications=False
+    ),
     skills=[],
     default_input_modes=["text/plain"],
     default_output_modes=["text/plain"],
