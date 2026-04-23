@@ -23,7 +23,7 @@
     "CODING_AGENT_MCP_URLS"
   ],
   "model_env_var": "CODING_AGENT_MODEL",
-  "health_path": "/.well-known/agent.json",
+  "health_path": "/.well-known/agent-card.json",
   "costaff_sdk_version": ">=0.2.0",
   "mcp_configurable": true,
   "mcp_env_var": "CODING_AGENT_MCP_URLS"

@@ -4,9 +4,11 @@ services:
       context: ./agent
     container_name: costaff-agent-coding
     restart: on-failure
+    ports:
+      - "8081:8081"
     environment:
       - PORT=8081
-      - PUBLIC_HOST=costaff-agent-coding
+      - PUBLIC_HOST=localhost
       - MCP_CODING_URL=http://costaff-mcp-coding:8082/mcp
       - WORKSPACE_DIR=/app/data
       - AGENT_CODING_WORKSPACE_DIR=/app/data/agent-coding

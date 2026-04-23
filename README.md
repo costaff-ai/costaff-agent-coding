@@ -35,7 +35,7 @@ Designed as a first-party external agent for the [CoStaff](https://github.com/co
 ```
 CoStaff Agent
      │
-     │  A2A Protocol (/.well-known/agent.json)
+     │  A2A Protocol (/.well-known/agent-card.json)
      ▼
 Coding Agent  ──►  MCP Coding Server  ──►  Sandboxed Python Runtime
                         │
@@ -52,7 +52,7 @@ Coding Agent  ──►  MCP Coding Server  ──►  Sandboxed Python Runtime
 ## Features
 
 - **Sandboxed Python execution** via dedicated MCP server — code runs in isolation
-- **A2A-compatible** — exposes `/.well-known/agent.json` health endpoint
+- **A2A-compatible** — exposes `/.well-known/agent-card.json` health endpoint
 - **Dynamic MCP support** — additional MCP servers can be assigned at runtime from the CoStaff dashboard without redeployment
 - **Multi-model support** — works with Google Gemini natively or any LiteLLM-compatible provider
 - **Shared volume integration** — output files accessible to other agents in the same ecosystem

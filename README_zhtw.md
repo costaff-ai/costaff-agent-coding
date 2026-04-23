@@ -35,7 +35,7 @@
 ```
 CoStaff Agent
      │
-     │  A2A 協議 (/.well-known/agent.json)
+     │  A2A 協議 (/.well-known/agent-card.json)
      ▼
 Coding Agent  ──►  MCP Coding Server  ──►  沙盒 Python 執行環境
                         │
