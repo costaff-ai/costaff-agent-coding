@@ -16,7 +16,7 @@ agent_card = AgentCard(
     description=coding_agent.description,
     version="1.0.0",
     capabilities=AgentCapabilities(
-        streaming=False,
+        streaming=True,
         push_notifications=False
     ),
     skills=[],
