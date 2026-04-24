@@ -70,9 +70,11 @@ else:
     logger.info(f"Coding Agent using model: {selected_model}")
 
 preferred_lang = os.getenv("COSTAFF_PREFERRED_LANGUAGE", "Traditional Chinese (繁體中文)")
+shared_dir = os.getenv("COSTAFF_SHARED_DIR_CODING", "/app/data/shared/costaff-agent-coding")
 instruction = (
     AGENT_INSTRUCTION
     .replace("{WORKSPACE_DIR}", WORKSPACE_DIR)
+    .replace("{COSTAFF_SHARED_DIR_CODING}", shared_dir)
     .replace("{user_id}", "shared")
     .replace("{PREFERRED_LANGUAGE}", preferred_lang)
 )
