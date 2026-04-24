@@ -10,16 +10,18 @@ services:
       - PORT=8081
       - PUBLIC_HOST=localhost
       - MCP_CODING_URL=http://costaff-mcp-coding:8082/mcp
+      # Plan B workspace env vars (injected by CoStaff CLI at deploy time)
       - WORKSPACE_DIR=/app/data
-      - AGENT_CODING_WORKSPACE_DIR=/app/data/agent-coding
+      - SHARED_DIR=/app/data/shared
+      - COSTAFF_SHARED_DIR_CODING=/app/data/shared/costaff-agent-coding
+      - AGENT_WORKSPACE_DIR_CODING=/app/data
       - COSTAFF_AGENT_MODEL_PROVIDER=${COSTAFF_AGENT_MODEL_PROVIDER:-gemini}
       - CODING_AGENT_MODEL=${CODING_AGENT_MODEL:-gemini-2.5-flash}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - LITELLM_MODEL_NAME=${LITELLM_MODEL_NAME:-}
       - LITELLM_API_BASE=${LITELLM_API_BASE:-}
       - LITELLM_API_KEY=${LITELLM_API_KEY:-}
-    volumes:
-      - costaff_data:/app/data
+    # Note: actual bind mounts are injected by the CoStaff CLI in compose-fragment.yaml
     depends_on:
       - costaff-mcp-coding
 
@@ -31,14 +33,11 @@ services:
     environment:
       - MCP_CODING_PORT=8082
       - WORKSPACE_DIR=/app/data
-      - AGENT_CODING_WORKSPACE_DIR=/app/data/agent-coding
+      - SHARED_DIR=/app/data/shared
+      - COSTAFF_SHARED_DIR_CODING=/app/data/shared/costaff-agent-coding
+      - AGENT_WORKSPACE_DIR_CODING=/app/data
       - ALLOW_PIP_INSTALL=${ALLOW_PIP_INSTALL:-true}
       - GIT_TOKEN=${GIT_TOKEN:-}
       - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-Coding Agent}
       - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-agent@costaff.ai}
-    volumes:
-      - costaff_data:/app/data
-
-volumes:
-  costaff_data:
-    name: costaff_data
+    # Note: actual bind mounts are injected by the CoStaff CLI in compose-fragment.yaml

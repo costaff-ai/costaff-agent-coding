@@ -12,9 +12,8 @@ logger = logging.getLogger("mcp-coding")
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent / "tools"))  # allow tools to import _shared
 
-WORKSPACE = os.getenv("AGENT_CODING_WORKSPACE_DIR", "/app/data/agent-coding")
-WORKSPACE_ROOT = os.getenv("WORKSPACE_DIR", "/app/data")
-PACKAGES_DIR = os.path.join(WORKSPACE_ROOT, "pip_packages")
+WORKSPACE = os.getenv("WORKSPACE_DIR", "/app/data/costaff-agent-coding")
+PACKAGES_DIR = os.path.join(WORKSPACE, "pip_packages")
 os.makedirs(WORKSPACE, exist_ok=True)
 os.makedirs(PACKAGES_DIR, exist_ok=True)
 

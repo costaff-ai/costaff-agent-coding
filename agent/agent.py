@@ -13,7 +13,7 @@ from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 from utils.instructions import AGENT_INSTRUCTION
 
-WORKSPACE_DIR = os.getenv("AGENT_CODING_WORKSPACE_DIR", "/app/data/agent-coding")
+WORKSPACE_DIR = os.getenv("WORKSPACE_DIR", "/app/data/costaff-agent-coding")
 
 def get_connection_params(entry):
     if isinstance(entry, str):
