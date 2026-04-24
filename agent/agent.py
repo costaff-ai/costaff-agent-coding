@@ -90,4 +90,5 @@ coding_agent = LlmAgent(
     ),
     instruction=instruction,
     tools=tools,
+    sub_agents=[],
 )
