@@ -1,6 +1,11 @@
 ---
 name: data-tools
-description: "Work with structured data: read and query JSON/YAML files, manage .env configuration variables, compare file versions with diff, and process CSV/tabular data. Use for config management, data inspection, environment setup, or output comparison."
+description: >
+  Ad-hoc data utilities that don't require a full pipeline: query JSON/YAML with
+  dot-notation paths, manage .env files (get, set, delete keys), diff two files to
+  inspect changes, and do quick CSV inspection without pandas. Use for one-off config
+  management, environment variable setup, output comparison, or lightweight data
+  inspection — not for loading datasets into DataFrames (use data-loading for that).
 ---
 
 # Data Tools Skill

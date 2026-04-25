@@ -1,6 +1,11 @@
 ---
 name: new-project
-description: "Scaffold and build a new Python project from scratch. Use when the workspace is empty, the user asks to create a new project, or no existing code needs to be modified."
+description: >
+  Scaffold a complete Python project from scratch: src layout, pyproject.toml,
+  tests directory, .gitignore, and README. Use when the workspace is empty, the user
+  asks to create or initialise a new project, or the task requires a clean project
+  structure with no existing code to modify. Skip the survey step and activate this
+  skill immediately.
 ---
 
 # New Project Skill

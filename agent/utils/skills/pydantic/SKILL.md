@@ -1,8 +1,12 @@
 ---
 name: pydantic
 description: >
-  Pydantic models and validation. Use when: (1) Defining schemas,
-  (2) Validating input/output, (3) Generating JSON schema.
+  Define and validate data with Pydantic v2: BaseModel schemas, field validators,
+  custom types, serialization/deserialization, settings management with BaseSettings,
+  and JSON schema generation. Use when designing API request/response models,
+  validating external or user-supplied data, building config classes that read from
+  environment variables, or whenever structured data needs type-safe validation and
+  parsing.
 ---
 
 # pydantic

@@ -1,6 +1,11 @@
 ---
 name: exploratory-data-analysis
-description: "Perform systematic exploratory data analysis (EDA) on a pandas DataFrame: shape, distributions, correlations, value counts, and anomaly detection. Use at the start of any data analysis task."
+description: >
+  Perform systematic exploratory data analysis (EDA) on a pandas DataFrame: shape,
+  dtypes, missing values, distributions, correlations, value counts, and outlier
+  detection. Use as the first step whenever you receive a new dataset, are asked to
+  explore or understand data, need to profile columns before modelling, or the user
+  says "show me what's in this data".
 ---
 
 # Exploratory Data Analysis Skill

@@ -1,6 +1,11 @@
 ---
 name: git-workflow
-description: "Perform git operations: stash, branch, merge, rebase, push, pull, commit, and manage history. Use for any version-control or source-management task."
+description: >
+  Perform git version-control operations end-to-end: create commits, stash changes,
+  manage branches, merge, rebase, resolve conflicts, push to remote, pull updates,
+  and inspect history. Use when the task involves any source-control workflow —
+  committing code, creating or switching branches, syncing with a remote repository,
+  undoing changes, or reviewing what changed between commits.
 ---
 
 # Git Workflow Skill

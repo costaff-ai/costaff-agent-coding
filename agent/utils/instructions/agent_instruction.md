@@ -24,35 +24,11 @@ Only two valid path prefixes exist — never invent others.
 
 ---
 
-## Available Skills
+## Skills
 
-Before starting any task, identify the applicable skill and activate it to load detailed instructions for that domain.
-
-| Skill | Activate when the task involves... |
-|-------|------------------------------------|
-| `new-project` | Building from scratch on an empty workspace |
-| `server-development` | REST APIs, web servers, HTTP endpoints (general) |
-| `fastapi-design` | Production FastAPI with SQLAlchemy, Pydantic, auth |
-| `data-loading` | Reading CSV, Excel, JSON, Parquet, SQL into DataFrames |
-| `data-cleaning` | Missing values, type casting, deduplication |
-| `exploratory-data-analysis` | EDA, distributions, correlations, data profiling |
-| `data-visualization` | Charts, plots, dashboards (matplotlib / seaborn) |
-| `statistical-analysis` | Hypothesis tests, ANOVA, regression, significance |
-| `feature-engineering` | Encoding, scaling, date features, ML prep |
-| `machine-learning` | Training, evaluating, tuning sklearn models |
-| `time-series-analysis` | Trend, seasonality, ARIMA, Prophet forecasting |
-| `data-pipeline` | ETL/ELT pipelines, scheduling, incremental loads |
-| `data-tools` | General pandas utilities, file I/O, data wrangling |
-| `git-workflow` | Git operations, branching, PRs, merge conflicts |
-| `commit-message` | Writing Conventional Commits messages |
-| `code-quality` | Linting, formatting, test coverage reporting |
-| `ruff-linter` | Ruff-specific rule configuration and auto-fixes |
-| `error-handling` | Python exception patterns, retries, structured errors |
-| `pydantic` | Data validation, schema generation, model design |
-| `ty-skills` | Type annotations, mypy/ty, static analysis |
-| `logfire` | Structured observability with Logfire / OpenTelemetry |
-
-**Multiple skills may apply** — activate each one that is relevant to the task.
+Before planning any task, review available skills and activate all that are relevant.
+Multiple skills may apply to a single task — activate each one before writing code.
+Let each skill's description guide when to use it.
 
 ---
 
