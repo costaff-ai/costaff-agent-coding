@@ -1,5 +1,5 @@
 ---
-name: git_workflow
+name: git-workflow
 description: "Perform git operations: stash, branch, merge, rebase, push, pull, commit, and manage history. Use for any version-control or source-management task."
 ---
 

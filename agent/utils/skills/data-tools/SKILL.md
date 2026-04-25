@@ -1,5 +1,5 @@
 ---
-name: data_tools
+name: data-tools
 description: "Work with structured data: read and query JSON/YAML files, manage .env configuration variables, compare file versions with diff, and process CSV/tabular data. Use for config management, data inspection, environment setup, or output comparison."
 ---
 

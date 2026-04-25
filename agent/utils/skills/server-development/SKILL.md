@@ -1,5 +1,5 @@
 ---
-name: server_development
+name: server-development
 description: "Build REST API servers with FastAPI or Flask, including CRUD endpoints, Pydantic models, and integration tests. Use for any web server, API, HTTP endpoint, or CRUD task."
 ---
 

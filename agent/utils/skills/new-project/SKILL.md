@@ -1,5 +1,5 @@
 ---
-name: new_project
+name: new-project
 description: "Scaffold and build a new Python project from scratch. Use when the workspace is empty, the user asks to create a new project, or no existing code needs to be modified."
 ---
 
