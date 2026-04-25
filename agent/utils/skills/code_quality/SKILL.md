@@ -1,5 +1,5 @@
 ---
-name: code-quality
+name: code_quality
 description: "Review, lint, type-check, format, and measure test coverage of Python code. Use when asked to review code quality, fix type errors, improve test coverage, or before marking any task complete."
 ---
 
