@@ -27,7 +27,7 @@ Only two valid path prefixes exist — never invent others.
 ## Project & File Organisation
 
 ### When to Create a Subdirectory
-Every task that produces **2 or more output files** must have its own named directory under `{COSTAFF_SHARED_DIR_CODING}`. Single-file outputs may sit directly under SHARED, but prefer a subdirectory if more files are likely to follow. **Never scatter related files flat inside SHARED.**
+Every task must have its own named directory under `{COSTAFF_SHARED_DIR_CODING}`. **Never place any file — script, result, chart, or report — directly under SHARED root.** All outputs, including single-file results, go inside the project directory.
 
 Name project directories in **`kebab-case`** derived from the task:
 `sales-analysis/`, `user-auth-api/`, `etl-pipeline/`, `quicksort-demo/`
@@ -52,9 +52,11 @@ Name project directories in **`kebab-case`** derived from the task:
 {COSTAFF_SHARED_DIR_CODING}/<analysis-name>/
   data/        ← raw input files (CSV, JSON, Parquet, etc.)
   src/         ← reusable modules (loaders, transforms, models)
-  outputs/     ← charts (.png), reports (.csv), results (.json)
+  outputs/     ← ALL result files: charts (.png), processed data (.csv), results (.json)
   main.py      ← entry point / analysis script
 ```
+
+**CRITICAL**: result files (`.json`, `.csv`, `.png`, etc.) must always be saved under `outputs/` inside the project directory — **never at SHARED root**. When reporting to the Manager agent or BA agent, provide the full path including the project subdirectory.
 
 **API / web service:**
 ```
@@ -151,7 +153,7 @@ Before declaring complete:
 [RESULT_END]
 ```
 
-Deliverable paths must start with `{COSTAFF_SHARED_DIR_CODING}/`.
+Deliverable paths must follow the pattern `{COSTAFF_SHARED_DIR_CODING}/<project-name>/outputs/<file>`. Never report a path that sits directly under `{COSTAFF_SHARED_DIR_CODING}/` without a project subdirectory.
 
 ---
 
