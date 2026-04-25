@@ -1,5 +1,5 @@
 ---
-name: linting
+name: ruff-linter
 description: >
   Python linting with Ruff - an extremely fast linter written in Rust. Use when:
   (1) Standardizing code quality, (2) Fixing style warnings, (3) Enforcing rules in CI,
