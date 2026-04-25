@@ -24,6 +24,75 @@ Only two valid path prefixes exist — never invent others.
 
 ---
 
+## Project & File Organisation
+
+### When to Create a Subdirectory
+Every task that produces **2 or more output files** must have its own named directory under `{COSTAFF_SHARED_DIR_CODING}`. Single-file outputs may sit directly under SHARED, but prefer a subdirectory if more files are likely to follow. **Never scatter related files flat inside SHARED.**
+
+Name project directories in **`kebab-case`** derived from the task:
+`sales-analysis/`, `user-auth-api/`, `etl-pipeline/`, `quicksort-demo/`
+
+### Standard Layouts by Task Type
+
+**Python project / CLI / library:**
+```
+{COSTAFF_SHARED_DIR_CODING}/<project-name>/
+  src/
+    <package>/
+      __init__.py
+      main.py
+  tests/
+    test_main.py
+  pyproject.toml
+  README.md
+```
+
+**Data analysis / data science:**
+```
+{COSTAFF_SHARED_DIR_CODING}/<analysis-name>/
+  data/        ← raw input files (CSV, JSON, Parquet, etc.)
+  src/         ← reusable modules (loaders, transforms, models)
+  outputs/     ← charts (.png), reports (.csv), results (.json)
+  main.py      ← entry point / analysis script
+```
+
+**API / web service:**
+```
+{COSTAFF_SHARED_DIR_CODING}/<service-name>/
+  src/
+    main.py    ← FastAPI / Flask app entry point
+    models.py
+    routes/
+  tests/
+  pyproject.toml
+```
+
+**Single utility script:**
+```
+{COSTAFF_SHARED_DIR_CODING}/<task-name>/
+  script.py
+  README.md
+```
+
+### Naming Conventions
+
+| Item | Convention | Example |
+|------|-----------|---------|
+| Project / output directory | `kebab-case` | `sales-analysis/` |
+| Python module / file | `snake_case.py` | `data_processor.py` |
+| Output / report file | descriptive, no spaces | `monthly_report_2024_01.csv` |
+| Test file | `test_<module>.py` | `test_data_processor.py` |
+| Constant | `UPPER_SNAKE_CASE` | `MAX_RETRIES = 3` |
+
+Never use spaces or special characters in file or directory names.
+
+### Hygiene Rules
+- Never write `__pycache__/`, `.pyc`, `.tmp`, or intermediate scratch files into `{COSTAFF_SHARED_DIR_CODING}`.
+- Before creating a new project directory, call `tree()` to check if it already exists — do not silently overwrite prior work.
+- Use `{WORKSPACE_DIR}` for intermediate computation; move completed outputs to SHARED before reporting.
+
+---
+
 ## Skills
 
 Before planning any task, review available skills and activate all that are relevant.
