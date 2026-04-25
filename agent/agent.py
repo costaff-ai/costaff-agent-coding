@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import logging
+import pathlib
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -9,6 +10,8 @@ logger = logging.getLogger(__name__)
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from google.adk.agents import LlmAgent
+from google.adk.skills import load_skill_from_dir
+from google.adk.tools import skill_toolset
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 from utils.instructions import AGENT_INSTRUCTION
@@ -34,7 +37,15 @@ mcp_params = StreamableHTTPServerParams(
     headers={"Authorization": f"Bearer {mcp_token}"}
 )
 
-tools = [McpToolset(connection_params=mcp_params)]
+_skills_dir = pathlib.Path(__file__).parent / "utils" / "skills"
+_skills = [
+    load_skill_from_dir(d)
+    for d in sorted(_skills_dir.iterdir())
+    if d.is_dir() and (d / "SKILL.md").exists()
+]
+logger.info(f"Loaded {len(_skills)} skill(s): {[d.name for d in sorted(_skills_dir.iterdir()) if d.is_dir() and (d / 'SKILL.md').exists()]}")
+
+tools = [McpToolset(connection_params=mcp_params), skill_toolset.SkillToolset(skills=_skills)]
 logger.info(f"Coding MCP URL: {MCP_CODING_URL}")
 
 # Additional MCPs configured via CoStaff dashboard (CODING_AGENT_MCP_URLS)
