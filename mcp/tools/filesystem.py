@@ -69,7 +69,7 @@ def tree(path: str = "", depth: int = 3) -> str:
                 connector = "└── " if is_last else "├── "
                 icon = "📄 " if entry.is_file() else "📁 "
                 lines.append(f"{prefix}{connector}{icon}{entry.name}")
-                if entry.is_dir():
+                if entry.is_dir() and not entry.is_symlink():
                     extension = "    " if is_last else "│   "
                     _walk(entry, prefix + extension, current_depth + 1)
 

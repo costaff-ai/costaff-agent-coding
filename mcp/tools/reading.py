@@ -2,6 +2,8 @@
 Reading tools — read files fully or partially, inspect code structure, and search.
 """
 import ast
+import difflib
+import json
 import re
 from pathlib import Path
 
@@ -169,7 +171,7 @@ def outline(path: str) -> str:
         return f"[ERROR]: {e}"
 
 
-def grep(pattern: str, path: str = "", recursive: bool = True, context: int = 2) -> str:
+def grep(pattern: str, path: str = "", recursive: bool = True, context: int = 2, max_matches: int = 500) -> str:
     """
     Search for a regex pattern across files in the workspace.
     Returns matching lines with surrounding context (like grep -n -C).
@@ -177,6 +179,7 @@ def grep(pattern: str, path: str = "", recursive: bool = True, context: int = 2)
     path: file or directory to search (default: entire workspace).
     recursive: search subdirectories (default: True).
     context: number of lines to show before/after each match (default: 2).
+    max_matches: maximum total match lines to return across all files (default: 500).
     """
     try:
         root = _safe_path(path) if path else _workspace()
@@ -195,7 +198,11 @@ def grep(pattern: str, path: str = "", recursive: bool = True, context: int = 2)
         text_files = [f for f in files if f.is_file()]
 
         results = []
+        total_match_lines = 0
+        truncated = False
         for filepath in sorted(text_files):
+            if truncated:
+                break
             try:
                 lines = filepath.read_text(encoding="utf-8", errors="replace").splitlines()
             except Exception:
@@ -218,6 +225,13 @@ def grep(pattern: str, path: str = "", recursive: bool = True, context: int = 2)
                     shown.add(i)
                     marker = "►" if i == mi else " "
                     results.append(f"  {marker} L{i+1:4d} │ {lines[i]}")
+                    total_match_lines += 1
+                    if total_match_lines >= max_matches:
+                        results.append(f"\n[TRUNCATED]: Reached {max_matches}-line limit. Narrow your search with a more specific pattern or path.")
+                        truncated = True
+                        break
+                if truncated:
+                    break
                 if mi != matches[-1]:
                     next_start = max(0, matches[matches.index(mi)+1] - context)
                     if next_start > end:
@@ -255,6 +269,82 @@ def find_files(pattern: str, path: str = "") -> str:
             kind = "DIR " if m.is_dir() else "FILE"
             lines.append(f"[{kind}]  {rel}")
         return f"Found {len(matches)} match(es) for '{pattern}':\n" + "\n".join(lines)
+    except ValueError as e:
+        return f"[ERROR]: {e}"
+    except Exception as e:
+        return f"[ERROR]: {e}"
+
+
+def query_json(path: str, expression: str = "") -> str:
+    """
+    Parse a JSON or YAML file and optionally extract a nested value.
+    expression: dot-notation path like 'servers.0.host' or 'metadata.name'.
+                Leave empty to pretty-print the entire file.
+    path: relative path within workspace (.json, .yaml, or .yml).
+    """
+    try:
+        target = _safe_path(path)
+        if not target.exists():
+            return f"[ERROR]: '{path}' does not exist."
+
+        content = target.read_text(encoding="utf-8")
+        if target.suffix in (".yaml", ".yml"):
+            try:
+                import yaml
+                data = yaml.safe_load(content)
+            except ImportError:
+                return "[ERROR]: PyYAML not installed. Run pip_install('pyyaml') first."
+        else:
+            try:
+                data = json.loads(content)
+            except json.JSONDecodeError as e:
+                return f"[ERROR]: JSON parse error: {e}"
+
+        if expression:
+            for part in expression.split("."):
+                if isinstance(data, list):
+                    try:
+                        data = data[int(part)]
+                    except (ValueError, IndexError) as exc:
+                        return f"[ERROR]: Cannot index list with '{part}': {exc}"
+                elif isinstance(data, dict):
+                    if part not in data:
+                        available = ", ".join(list(data.keys())[:10])
+                        return f"[ERROR]: Key '{part}' not found. Available: {available}"
+                    data = data[part]
+                else:
+                    return f"[ERROR]: Cannot traverse into {type(data).__name__} with key '{part}'."
+
+        return json.dumps(data, indent=2, ensure_ascii=False)
+    except ValueError as e:
+        return f"[ERROR]: {e}"
+    except Exception as e:
+        return f"[ERROR]: {e}"
+
+
+def diff_files(path_a: str, path_b: str) -> str:
+    """
+    Compare two files and show a unified diff.
+    path_a: first file (relative to workspace).
+    path_b: second file (relative to workspace).
+    """
+    try:
+        a = _safe_path(path_a)
+        b = _safe_path(path_b)
+        if not a.exists():
+            return f"[ERROR]: '{path_a}' does not exist."
+        if not b.exists():
+            return f"[ERROR]: '{path_b}' does not exist."
+        try:
+            lines_a = a.read_text(encoding="utf-8").splitlines(keepends=True)
+            lines_b = b.read_text(encoding="utf-8").splitlines(keepends=True)
+        except UnicodeDecodeError:
+            return "[ERROR]: One or both files appear to be binary."
+
+        diff = list(difflib.unified_diff(lines_a, lines_b, fromfile=path_a, tofile=path_b))
+        if not diff:
+            return f"Files '{path_a}' and '{path_b}' are identical."
+        return f"── diff {path_a} → {path_b} ({len(diff)} lines) ──\n" + "".join(diff)
     except ValueError as e:
         return f"[ERROR]: {e}"
     except Exception as e:

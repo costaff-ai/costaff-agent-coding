@@ -125,7 +125,7 @@ def insert_after_line(path: str, line_number: int, text: str) -> str:
         lines.insert(line_number, insertion)
 
         target.write_text("".join(lines), encoding="utf-8")
-        inserted_count = len(text.splitlines())
+        inserted_count = insertion.count("\n")
         return (
             f"Inserted {inserted_count} line(s) after line {line_number} in '{path}'. "
             f"File now has {total + inserted_count} lines."

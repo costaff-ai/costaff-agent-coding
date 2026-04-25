@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from _shared import _packages_dir, _workspace
+from _shared import _packages_dir, _workspace, TIMEOUT_SHORT, TIMEOUT_INSTALL
 
 
 def pip_install(package: str) -> str:
@@ -14,9 +14,8 @@ def pip_install(package: str) -> str:
     Packages are installed to a persistent directory and survive container restarts.
     package: package name or spec (e.g. 'pandas', 'numpy==1.26', 'scikit-learn pandas').
     """
-    allow = True  # Could be env-var gated if needed
-    if not allow:
-        return "[ERROR]: Package installation is disabled."
+    if os.getenv("ALLOW_PIP_INSTALL", "true").lower() != "true":
+        return "[ERROR]: Package installation is disabled (set ALLOW_PIP_INSTALL=true to enable)."
     try:
         packages_dir = str(_packages_dir())
         result = subprocess.run(
@@ -24,7 +23,7 @@ def pip_install(package: str) -> str:
             + package.split(),
             capture_output=True,
             text=True,
-            timeout=180,
+            timeout=TIMEOUT_INSTALL,
         )
         if result.returncode != 0:
             return f"[ERROR]: pip install failed:\n{result.stderr}"
@@ -47,7 +46,7 @@ def pip_list() -> str:
             ["pip", "list", "--path", packages_dir, "--format=columns"],
             capture_output=True,
             text=True,
-            timeout=30,
+            timeout=TIMEOUT_SHORT,
         )
         if result.returncode != 0:
             return f"[ERROR]: pip list failed:\n{result.stderr}"

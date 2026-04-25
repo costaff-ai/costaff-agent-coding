@@ -10,7 +10,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from _shared import _packages_dir, _safe_path, _workspace
+from _shared import _build_env, _packages_dir, _safe_path, _workspace, TIMEOUT_LONG, TIMEOUT_MEDIUM
 
 # ---------------------------------------------------------------------------
 # Shell safety block-list
@@ -62,19 +62,14 @@ def run_python_file(path: str, args: str = "") -> str:
         if target.suffix != ".py":
             return f"[ERROR]: '{path}' is not a Python file."
 
-        packages = str(_packages_dir())
         cmd = ["python3", str(target)] + (args.split() if args else [])
-        env = os.environ.copy()
-        existing_path = env.get("PYTHONPATH", "")
-        env["PYTHONPATH"] = f"{packages}:{existing_path}" if existing_path else packages
-
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=TIMEOUT_LONG,
             cwd=str(_workspace()),
-            env=env,
+            env=_build_env(),
         )
         output = result.stdout
         if result.stderr:
@@ -105,18 +100,13 @@ def run_python_code(code: str) -> str:
         tmp_path = Path(tempfile.gettempdir()) / f"coding_agent{suffix}"
         tmp_path.write_text(full_code, encoding="utf-8")
 
-        packages = str(_packages_dir())
-        env = os.environ.copy()
-        existing_path = env.get("PYTHONPATH", "")
-        env["PYTHONPATH"] = f"{packages}:{existing_path}" if existing_path else packages
-
         result = subprocess.run(
             ["python3", str(tmp_path)],
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=TIMEOUT_LONG,
             cwd=str(_workspace()),
-            env=env,
+            env=_build_env(),
         )
         output = result.stdout
         if result.stderr:
@@ -161,21 +151,14 @@ def run_shell(command: str) -> str:
             "If you need file operations, use the filesystem tools."
         )
     try:
-        packages = str(_packages_dir())
-        env = os.environ.copy()
-        existing_path = env.get("PYTHONPATH", "")
-        env["PYTHONPATH"] = f"{packages}:{existing_path}" if existing_path else packages
-        existing_pp = env.get("PATH", "")
-        env["PATH"] = f"{packages}/bin:{existing_pp}" if existing_pp else f"{packages}/bin"
-
         result = subprocess.run(
             command,
             shell=True,
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=TIMEOUT_MEDIUM,
             cwd=str(_workspace()),
-            env=env,
+            env=_build_env(include_bin=True),
         )
         output = result.stdout
         if result.stderr:
@@ -204,11 +187,6 @@ def run_pytest(path: str = "", flags: str = "") -> str:
         else:
             test_target = str(_workspace())
 
-        packages = str(_packages_dir())
-        env = os.environ.copy()
-        existing_path = env.get("PYTHONPATH", "")
-        env["PYTHONPATH"] = f"{packages}:{existing_path}" if existing_path else packages
-
         cmd = ["python3", "-m", "pytest", test_target, "--tb=short", "-q"]
         if flags:
             cmd += flags.split()
@@ -217,9 +195,9 @@ def run_pytest(path: str = "", flags: str = "") -> str:
             cmd,
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=TIMEOUT_LONG,
             cwd=str(_workspace()),
-            env=env,
+            env=_build_env(),
         )
         output = result.stdout
         if result.stderr:
@@ -235,6 +213,55 @@ def run_pytest(path: str = "", flags: str = "") -> str:
         return output or "(no output)"
     except subprocess.TimeoutExpired:
         return "[ERROR]: pytest timed out (120s limit)."
+    except ValueError as e:
+        return f"[ERROR]: {e}"
+    except Exception as e:
+        return f"[ERROR]: {e}"
+
+
+def run_coverage(path: str = "", min_pct: int = 0, flags: str = "") -> str:
+    """
+    Run pytest with coverage and show a per-file coverage report.
+    Requires pytest-cov: pip_install('pytest-cov').
+    path: test file or directory (default: workspace root).
+    min_pct: fail if overall coverage is below this percentage (0 = no minimum).
+    flags: additional pytest flags (e.g. '-k test_login').
+    """
+    try:
+        if path:
+            target = _safe_path(path)
+            if not target.exists():
+                return f"[ERROR]: '{path}' does not exist."
+            test_target = str(target)
+        else:
+            test_target = str(_workspace())
+
+        cmd = [
+            "python3", "-m", "pytest",
+            test_target,
+            f"--cov={_workspace()}",
+            "--cov-report=term-missing",
+            "--tb=no", "-q",
+        ]
+        if min_pct:
+            cmd.append(f"--cov-fail-under={min_pct}")
+        if flags:
+            cmd += flags.split()
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=TIMEOUT_LONG,
+            cwd=str(_workspace()),
+            env=_build_env(),
+        )
+        output = result.stdout
+        if result.stderr:
+            output += f"\n[STDERR]:\n{result.stderr}"
+        return output or "(no output)"
+    except subprocess.TimeoutExpired:
+        return f"[ERROR]: Coverage run timed out ({TIMEOUT_LONG}s limit)."
     except ValueError as e:
         return f"[ERROR]: {e}"
     except Exception as e:

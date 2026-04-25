@@ -8,6 +8,9 @@ Safe operations (always available):
 Authenticated operations (require GIT_TOKEN env var):
   git_push, git_pull
 
+Branch management (always available):
+  git_stash, git_merge, git_rebase
+
 Credential setup (env vars read at call time):
   GIT_TOKEN        — Personal Access Token for HTTPS push/pull
   GIT_AUTHOR_NAME  — Commit author name  (default: "Coding Agent")
@@ -18,7 +21,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from _shared import _safe_path, _workspace
+from _shared import _safe_path, _workspace, TIMEOUT_MEDIUM
 
 # ---------------------------------------------------------------------------
 # Internal helpers
@@ -37,7 +40,7 @@ def _run_git(args: list[str], cwd: Path, env: dict | None = None) -> str:
             ["git"] + args,
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=TIMEOUT_MEDIUM,
             cwd=str(cwd),
             env=base_env,
         )
@@ -77,6 +80,19 @@ def _author_env() -> dict:
         "GIT_COMMITTER_NAME": os.getenv("GIT_AUTHOR_NAME",  "Coding Agent"),
         "GIT_COMMITTER_EMAIL":os.getenv("GIT_AUTHOR_EMAIL", "agent@costaff.ai"),
     }
+
+
+def _run_git_authed(args: list[str], remote: str, repo: Path, token: str) -> str:
+    """Run a git command with HTTPS token auth, restoring the original remote URL after."""
+    get_url = _run_git(["remote", "get-url", remote], cwd=repo)
+    is_https = get_url.startswith("http")
+    if is_https:
+        _run_git(["remote", "set-url", remote, _inject_token(get_url.strip(), token)], cwd=repo)
+    try:
+        return _run_git(args, cwd=repo)
+    finally:
+        if is_https:
+            _run_git(["remote", "set-url", remote, get_url.strip()], cwd=repo)
 
 
 # ---------------------------------------------------------------------------
@@ -241,23 +257,8 @@ def git_push(remote: str = "origin", branch: str = "", path: str = "") -> str:
         )
     try:
         repo = _repo_path(path)
-
-        # Rewrite the remote URL to embed the token (HTTPS only)
-        get_url = _run_git(["remote", "get-url", remote], cwd=repo)
-        if get_url.startswith("http"):
-            authed_url = _inject_token(get_url.strip(), token)
-            _run_git(["remote", "set-url", remote, authed_url], cwd=repo)
-
-        args = ["push", remote]
-        if branch:
-            args.append(branch)
-        result = _run_git(args, cwd=repo)
-
-        # Restore original URL (remove token from remote config)
-        if get_url.startswith("http"):
-            _run_git(["remote", "set-url", remote, get_url.strip()], cwd=repo)
-
-        return result
+        args = ["push", remote] + ([branch] if branch else [])
+        return _run_git_authed(args, remote, repo, token)
     except ValueError as e:
         return f"[ERROR]: {e}"
 
@@ -279,20 +280,57 @@ def git_pull(remote: str = "origin", branch: str = "", path: str = "") -> str:
         )
     try:
         repo = _repo_path(path)
+        args = ["pull", remote] + ([branch] if branch else [])
+        return _run_git_authed(args, remote, repo, token)
+    except ValueError as e:
+        return f"[ERROR]: {e}"
 
-        get_url = _run_git(["remote", "get-url", remote], cwd=repo)
-        if get_url.startswith("http"):
-            authed_url = _inject_token(get_url.strip(), token)
-            _run_git(["remote", "set-url", remote, authed_url], cwd=repo)
 
-        args = ["pull", remote]
-        if branch:
-            args.append(branch)
-        result = _run_git(args, cwd=repo)
+def git_stash(action: str = "push", message: str = "", path: str = "") -> str:
+    """
+    Manage the git stash.
+    action: 'push' (save changes, default), 'pop' (restore latest), 'list', or 'drop'.
+    message: optional description label (only applies to push).
+    path: relative path to the repository root within workspace.
+    """
+    valid = {"push", "pop", "list", "drop"}
+    if action not in valid:
+        return f"[ERROR]: action must be one of: {', '.join(sorted(valid))}."
+    try:
+        if action == "push":
+            args = ["stash", "push"] + (["-m", message] if message else [])
+        else:
+            args = ["stash", action]
+        return _run_git(args, cwd=_repo_path(path))
+    except ValueError as e:
+        return f"[ERROR]: {e}"
 
-        if get_url.startswith("http"):
-            _run_git(["remote", "set-url", remote, get_url.strip()], cwd=repo)
 
-        return result
+def git_merge(branch: str, path: str = "", no_ff: bool = False) -> str:
+    """
+    Merge a branch into the current branch.
+    branch: the branch name to merge from.
+    path: relative path to the repository root within workspace.
+    no_ff: always create a merge commit, even for fast-forwards (--no-ff).
+    """
+    if not branch or not branch.strip():
+        return "[ERROR]: Branch name cannot be empty."
+    try:
+        args = ["merge", branch] + (["--no-ff"] if no_ff else [])
+        return _run_git(args, cwd=_repo_path(path), env=_author_env())
+    except ValueError as e:
+        return f"[ERROR]: {e}"
+
+
+def git_rebase(base: str, path: str = "") -> str:
+    """
+    Rebase the current branch onto another branch or commit.
+    base: the branch name or commit SHA to rebase onto.
+    path: relative path to the repository root within workspace.
+    """
+    if not base or not base.strip():
+        return "[ERROR]: Base branch/commit cannot be empty."
+    try:
+        return _run_git(["rebase", base], cwd=_repo_path(path), env=_author_env())
     except ValueError as e:
         return f"[ERROR]: {e}"
