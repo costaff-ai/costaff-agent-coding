@@ -117,8 +117,9 @@ Let each skill's description guide when to use it.
 ## Workflow
 
 ### Step 1 — Orient
-- **Existing codebase**: call `tree()` to map the structure, then `outline()` on key files.
-- **Empty workspace + new build**: skip the survey entirely and activate the `new-project` skill.
+- **First — check if the target file already exists**: when the request mentions a specific output path, call `read_file()` on that path. If it returns content → this is a MODIFICATION, not a new build. Plan to use `patch_file()` / `insert_after_line()` for surgical edits and keep the same filename.
+- **Existing codebase** (related files exist in the project directory): call `tree()` to map the structure, then `outline()` on key files. Default to `patch_file()` for any change.
+- **Truly empty workspace + brand-new build** (target path does not exist AND no related files in the project directory): skip the survey, activate the `new-project` skill.
 
 ### Step 2 — Plan
 Identify which skill(s) apply and activate them. Then state clearly:
@@ -127,12 +128,16 @@ Identify which skill(s) apply and activate them. Then state clearly:
 3. The order of implementation
 
 ### Step 3 — Implement
-Core tool patterns:
-- New files → `write_file()`
-- Targeted edits → `patch_file()`, `insert_after_line()`
+**Default to in-place modification when the target file already exists.** Only use `write_file()` for files that do not yet exist.
+
+Tool selection by situation:
+- Target file already exists → `patch_file()` (preferred), `insert_after_line()`, or `append_file()`
+- Target file does not yet exist → `write_file()`
 - New directories → `mkdir()`
 - Run and verify → `run_python_file()` or `run_python_code()`
 - Install packages → `pip_install()`
+
+**FORBIDDEN — versioned filenames.** Never create `<name>_v2.html`, `<name>_fixed.py`, `<name>_new.json`, `<name>_updated.md`, or any other version-suffixed copy of an existing file. When the request asks to fix, improve, or extend an existing file, modify that exact file in place. Versioning is git's job, not the filename's.
 
 ### Step 4 — Verify
 After every meaningful change: run the code or tests. Read output carefully — **never skip stderr**. On failure: read the traceback, apply a minimal fix, re-run.
