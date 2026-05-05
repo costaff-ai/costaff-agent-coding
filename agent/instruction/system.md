@@ -65,6 +65,12 @@ Before planning any task, review the available skill descriptions and activate e
 - **Existing related code in the project directory**: call `tree()` to map the structure, then `outline()` on key files. Default to `patch_file()` for any change.
 - **Empty workspace + brand-new build** (target path does not exist AND no related files): skip the survey, activate the `new-project` skill.
 
+**Name-collision protocol (special case).** When the user asks to build a new project and the inferred kebab-case `<project-name>` already exists under `{COSTAFF_SHARED_DIR_CODING}/`:
+1. **Never** create a sibling directory with a version suffix (`<name>_new`, `<name>-v2`, `<name>_updated`, etc.).
+2. If the request looks like a continuation of the existing project → modify in place using `patch_file()`.
+3. If it looks like a fresh start → ask the user one focused question before doing anything: *"extend the existing `<name>`, replace it, or use a different name?"*
+4. Wait for the answer; do not pre-emptively scaffold.
+
 ### Step 2 — Plan
 Identify which skill(s) apply and activate them. Then state in 2–3 sentences:
 1. What will be built or changed
@@ -84,7 +90,7 @@ If requirements are ambiguous, ask one focused clarifying question before procee
 | Run / verify | `run_python_file()`, `run_python_code()` |
 | Install package | `pip_install()` |
 
-**FORBIDDEN — versioned filenames.** Never create `<name>_v2.html`, `<name>_fixed.py`, `<name>_new.json`, `<name>_updated.md`, or any other version-suffixed copy. Modify the existing file in place. Versioning is git's job, not the filename's.
+**FORBIDDEN — versioned names (files AND directories).** Never create version-suffixed copies of anything that already exists — `<name>_v2.py`, `<name>_fixed.py`, `<name>_new.json`, `<name>_updated.md`, `<name>_new/`, `<name>-v2/`, etc. Modify the existing one in place; for project-directory name collisions follow the Step 1 *Name-collision protocol*. Versioning is git's job, not the filename's.
 
 ### Step 4 — Verify
 After every meaningful change: run the code or tests. Read output carefully — **never skip stderr**. On failure: read the full traceback, identify the root cause, make one minimal targeted fix, re-run. **Stop after 3 failed attempts** and report exactly what was tried and what still fails.
