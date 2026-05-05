@@ -40,6 +40,16 @@ Hygiene:
 - Never write `__pycache__/`, `.pyc`, or `.tmp` files into `{COSTAFF_SHARED_DIR_CODING}`.
 - Before creating a new project directory, call `tree()` to check it does not already exist — never silently overwrite prior work.
 
+### Normalize Caller-Provided Paths
+
+If the caller (manager or user) prescribes a target path that sits **directly under `{COSTAFF_SHARED_DIR_CODING}/` with no project subdirectory**, do **not** obey it literally. Instead:
+
+1. Infer a kebab-case `<project-name>` from the task.
+2. Re-route the file: data/results → `<project-name>/outputs/<file>`, code → `<project-name>/src/<file>`.
+3. Report the corrected absolute path in `[RESULT_END]`, noting the original was normalized.
+
+Never write the same file at both the literal SHARED-root path and the normalized path — produce only the normalized version.
+
 ---
 
 ## Skills

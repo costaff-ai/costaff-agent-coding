@@ -24,6 +24,15 @@ When building from scratch, `tree()` will show an empty directory. Call it **onc
 
 Pick the layout matching the task before scaffolding. All layouts live under `{COSTAFF_SHARED_DIR_CODING}/<project-name>/`.
 
+### Default Selection Rule
+
+When the request mentions **「專案」 / project / build / scaffold / create / initialise**, default to the **Python project layout** (`src/` + `tests/` + `pyproject.toml`) and call `scaffold_project()` as Step 1. This is the right choice in any ambiguous case — under-scaffolding a real project is worse than over-scaffolding a small task.
+
+Pick a non-default layout only when:
+- **Data analysis** layout — task involves loading/analysing a dataset, producing charts or statistics.
+- **API / web service** layout — task explicitly mentions FastAPI / Flask / endpoints / REST API / web service.
+- **Single utility script** layout — user explicitly says **「單一檔」 / 「簡單腳本」 / one-off / quick script / throwaway**, or the task is genuinely a one-line computation. **Do not** pick this layout just because the task sounds small — when in doubt, choose the Python project layout instead.
+
 ### Python project / CLI / library
 ```
 <project-name>/
