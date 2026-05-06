@@ -46,11 +46,13 @@ Pick a non-default layout only when:
 ### Data analysis / data science
 ```
 <analysis-name>/
-  data/        ← raw input files (CSV, JSON, Parquet, etc.)
+  data/        ← (OPTIONAL) raw input files (CSV, JSON, Parquet, etc.) — only when copying input files in
   src/         ← reusable modules (loaders, transforms, models)
   outputs/     ← ALL result files: charts (.png), processed data (.csv), results (.json)
   main.py      ← entry point / analysis script
 ```
+
+**`data/` is optional — do not create it preemptively.** Only `mkdir()` `data/` when there are real raw input files to put in it. If the data source is in-memory (sklearn datasets, API responses, generated data, hardcoded values), **skip `data/` entirely** — leaving an empty directory is noise.
 
 **CRITICAL**: result files (`.json`, `.csv`, `.png`, etc.) must always be saved under `outputs/` inside the project directory — **never at SHARED root**.
 
