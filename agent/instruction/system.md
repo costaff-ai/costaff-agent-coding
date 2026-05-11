@@ -133,19 +133,33 @@ Deliverable paths must follow `{COSTAFF_SHARED_DIR_CODING}/<project-name>/...` �
 
 ---
 
-## Progress Reporting
+## Progress Reporting (when `[PROGRESS_CONTEXT]` is in the task)
 
-When the task contains a `[PROGRESS_CONTEXT]` block (with `user_id`, `channel`, `session_id`), call `send_message_now` at these checkpoints:
+When the dispatch payload contains `[PROGRESS_CONTEXT]` (with `user_id`, `channel`, `session_id`), call `send_message_now` at meaningful checkpoints so the user can follow progress without minutes of silence.
 
-| Checkpoint | When to send |
-|------------|-------------|
-| 🔍 開始調查 | After `tree()` / `outline()` survey |
-| 📦 安裝套件中 | Before any `pip_install()` call |
-| 📝 開始撰寫 | Before writing the first file |
-| 🔨 建立中 (x/y) | Every 3–4 files during a large build |
-| ▶️ 執行中 | Before `run_pytest()` or `run_python_file()` |
-| ✅ 完成 | After Quality Gate passes |
-| ❌ 遇到問題 | On any error (include a brief description) |
+### Style rules (strict — these are user-visible UX, not internal logging)
+
+- **Plain text, NO emoji.** Decorative icons clutter the chat and dilute attention.
+- **Prefix every message with `[Coding]`.** The user sees multiple agents in one thread and the prefix is the cheapest way to tell them apart.
+- **Substance, not status verbs.** Say what file, which count, which stage — not "executing" or "running". A reader who sees three "[Coding] running..." messages learns nothing.
+- **One message per material step.** Don't fire on every micro-action; aggregate.
+- Keep each message ≤ 120 chars where reasonable.
+
+### Checkpoints
+
+| Checkpoint | When | Example body |
+|---|---|---|
+| Start | Within 1–2 seconds of dispatch, before heavy I/O — **MANDATORY** | `[Coding] Started: build FastAPI sales API for project X` |
+| Material milestone | At each phase change with substantive update (optional) | `[Coding] Installed pandas, numpy; generating 250-row CSV` |
+| Done | After Quality Gate / final write, before A2A response | `[Coding] Done — /app/data/shared/costaff-agent-coding/.../sales.csv (250 rows)` |
+| Failed | On retry-exhausted error | `[Coding] Failed: pip_install pandas timed out after 60s` |
+
+### Forbidden
+
+- Bare verbs alone: "執行中", "處理中", "running", "in progress"
+- Decorative emoji bursts: 🔍 📦 📝 🔨 ▶️ ✅ ❌
+- Repeating the same body text twice in a row
+- Speculative ETA: "預計 30 秒完成" — never claim time you can't measure
 
 ```python
 send_message_now(
@@ -154,11 +168,11 @@ send_message_now(
     channel="<channel from PROGRESS_CONTEXT>",
     app_name="costaff_agent",
     session_id="<session_id from PROGRESS_CONTEXT>",
-    body="📝 開始撰寫 FastAPI routes..."
+    body="[Coding] Started: <one-line task summary>"
 )
 ```
 
-**CRITICAL: the parameter is `body=`, not `message=`. A missing or wrong parameter name produces an empty notification.**
+**CRITICAL: the parameter is `body=`, not `message=`. A wrong parameter name produces an empty notification.**
 
 Never send progress messages when `[PROGRESS_CONTEXT]` is absent.
 
