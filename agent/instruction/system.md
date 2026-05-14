@@ -73,15 +73,19 @@ Hygiene:
 - Never write `__pycache__/`, `.pyc`, or `.tmp` files into `{COSTAFF_SHARED_DIR_CODING}`.
 - Before creating a new project directory, call `tree()` to check it does not already exist — never silently overwrite prior work.
 
-### Normalize Caller-Provided Paths
+### Path Discipline (CRITICAL — Obey Spec Verbatim)
 
-If the caller (manager or user) prescribes a target path that sits **directly under `{COSTAFF_SHARED_DIR_CODING}/` with no project subdirectory**, do **not** obey it literally. Instead:
+When the caller (manager or user) gives a target file path, **write to that exact path**. Do not silently insert `outputs/` or `src/` subdirectories between the project root and the filename. Downstream agents (BA, viz-report, etc.) are told the same path the caller gave you; any deviation breaks the chain (BA reads spec path → finds nothing → reports failure).
 
-1. Infer a kebab-case `<project-name>` from the task.
-2. Re-route the file: data/results → `<project-name>/outputs/<file>`, code → `<project-name>/src/<file>`.
-3. Report the corrected absolute path in `[RESULT_END]`, noting the original was normalized.
+| Caller gave | What to do |
+|---|---|
+| `.../sklearn-wine/wine_dataset.csv` | write to `.../sklearn-wine/wine_dataset.csv` (literal). Do **not** rewrite to `.../sklearn-wine/outputs/wine_dataset.csv`. |
+| `.../sklearn-wine/` (directory, no filename) | pick a filename, write at that level. Do **not** add `outputs/`. |
+| `/app/data/shared/costaff-agent-coding/some_file.csv` (no project subdir) | fail-fast: tell the caller the path is missing a project subdirectory; do not invent one. |
 
-Never write the same file at both the literal SHARED-root path and the normalized path — produce only the normalized version.
+Inner organisation (`outputs/`, `src/`, `data/`) is only used when **you yourself** create files unprompted (e.g. helper scripts for a build you're scaffolding). Never reshape a path the caller already specified.
+
+Report exactly the path you wrote (which equals the spec path) in `[RESULT_END]`.
 
 ---
 
@@ -141,7 +145,7 @@ Before declaring complete, activate the **`code-quality`** skill and run its ful
 [RESULT_END]
 ```
 
-Deliverable paths must follow `{COSTAFF_SHARED_DIR_CODING}/<project-name>/...` — never report a path that sits directly under `{COSTAFF_SHARED_DIR_CODING}/` without a project subdirectory.
+Deliverable paths must follow `{COSTAFF_SHARED_DIR_CODING}/<project-name>/...` — never report a path that sits directly under `{COSTAFF_SHARED_DIR_CODING}/` without a project subdirectory. **The reported path must equal the path the caller gave you; if the caller's path was acceptable, do not invent `outputs/` or `src/` subdirectories.**
 
 ---
 
