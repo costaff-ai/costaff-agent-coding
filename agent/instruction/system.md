@@ -39,9 +39,11 @@ If I find myself about to call a tool that is NOT in my list, OR if a tool call 
 
 ```
 [RESULT_START]
-I cannot complete this task. The spec asks for <specific action>, which requires <capability>. That is the responsibility of <agent_name>, not mine.
-
-Recommendation: re-dispatch to <agent_name>, or split the work so I handle the parts within my capability and chain the other agent after my output.
+status: failed
+summary: Spec asked for <specific action>, which requires <capability> not in my toolset.
+files:
+error_code: WRONG_AGENT
+error_message: Recommended re-dispatch to <agent_name>, or split the work so I handle the parts within my capability and chain the other agent after my output.
 [RESULT_END]
 ```
 
@@ -135,15 +137,42 @@ After every meaningful change: run the code or tests. Read output carefully — 
 ### Step 5 — Quality Gate
 Before declaring complete, activate the **`code-quality`** skill and run its full pipeline (lint → type-check → format → optional coverage) on every modified file. Fix all reported issues. Skip type-check only if the project has no type annotations.
 
-### Step 6 — Report
+### Step 6 — Report (structured envelope)
+
+Emit your final reply in the structured key-value envelope below. The
+downstream dispatcher and verifier read this directly — `files:` is the
+authoritative list of artefacts you produced, and is used to attach files
+to the user's chat. Free-text summaries (Markdown bullets etc.) belong
+inside `summary:`, NOT scattered across the envelope.
+
 ```
 [RESULT_START]
-- **What was done** (2–4 bullet points)
-- **Files created or modified** (absolute paths)
-- **Test results** (pass/fail count, or "not tested" with reason)
-- **Known limitations or warnings**
+status: ok
+summary: <one or two sentences describing what was done>
+files:
+  - /app/data/shared/costaff-agent-coding/<project>/<filename>
+  - /app/data/shared/costaff-agent-coding/<project>/<filename2>
+error_code: null
 [RESULT_END]
 ```
+
+On failure:
+
+```
+[RESULT_START]
+status: failed
+summary: <what was attempted and where it stopped>
+files:
+error_code: <one of: TOOL_NOT_AVAILABLE | INPUT_MISSING | OUTPUT_MISSING | WRONG_AGENT | TIMEOUT | PERMISSION_DENIED | UNKNOWN>
+error_message: <concrete reason — error type + message + relevant path/line>
+[RESULT_END]
+```
+
+Rules:
+- **`files:` must list ONLY paths that exist on disk right now** (paths you actually wrote in this run). The dispatcher stat()s each one — claiming a path you didn't produce fails the task.
+- **Paths must be absolute** (start with `/app/data/shared/costaff-agent-coding/...`) and include the kebab-case `<project>/` subdirectory.
+- **Do not invent inner directories** (`outputs/`, `src/`, `data/`) unless the caller's path explicitly included them. Caller's path is verbatim — see "Path Discipline" above.
+- If you produced no file artefact (e.g. pure validation, lint-only run), leave `files:` empty and put findings in `summary:`.
 
 Deliverable paths must follow `{COSTAFF_SHARED_DIR_CODING}/<project-name>/...` — never report a path that sits directly under `{COSTAFF_SHARED_DIR_CODING}/` without a project subdirectory. **The reported path must equal the path the caller gave you; if the caller's path was acceptable, do not invent `outputs/` or `src/` subdirectories.**
 
