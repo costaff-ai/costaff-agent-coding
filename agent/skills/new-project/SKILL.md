@@ -54,7 +54,19 @@ Pick a non-default layout only when:
 
 **`data/` is optional — do not create it preemptively.** Only `mkdir()` `data/` when there are real raw input files to put in it. If the data source is in-memory (sklearn datasets, API responses, generated data, hardcoded values), **skip `data/` entirely** — leaving an empty directory is noise.
 
-**CRITICAL**: result files (`.json`, `.csv`, `.png`, etc.) must always be saved under `outputs/` inside the project directory — **never at SHARED root**.
+### When `outputs/` applies (and when it doesn't)
+
+`outputs/` is the recommended home for result files **when YOU choose the path** — i.e. greenfield scaffolds where the caller did not specify a target file path. In that case: put `.json`, `.csv`, `.png` under `outputs/` instead of dumping them at the project root.
+
+**`outputs/` does NOT apply when the caller (Manager or user) gave you an exact target path** — even if that path sits at the project root with no inner subdirectory. Path Discipline (`instruction/system.md`) overrides this skill: write to the caller's path verbatim, do not silently insert `outputs/` between the project root and the filename. The downstream agent (BA, viz-report, etc.) reads the same path the caller gave you; any deviation breaks the chain.
+
+| Caller gave | Where to write |
+|---|---|
+| `.../wine/wine.csv` | `.../wine/wine.csv` — do **not** rewrite to `.../wine/outputs/wine.csv` |
+| `.../wine/` (no filename) | pick a filename at that level. Do **not** add `outputs/`. |
+| No path at all (greenfield) | `.../wine/outputs/wine.csv` ✅ (skill convention applies) |
+
+**Never** save result files directly at SHARED root (no project subdirectory). That part of the rule is absolute.
 
 ### API / web service
 ```
