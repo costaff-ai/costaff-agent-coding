@@ -10,9 +10,13 @@ from instruction import build_instruction
 from mcp_toolsets import load_all_mcp_toolsets
 from models import selected_model
 from skills import load_all_skills
+from tools import load_costaff_api_tools
 
-# Tools = MCP toolsets + Skill toolset
+# Tools = own-MCP toolset (single SSE session) + 4 shared core tools via
+# the costaff-core httpx shim + Skill toolset. Exactly ONE McpToolset →
+# no anyio cancel-scope multi-session race (#4454). See mcp_toolsets/.
 tools = list(load_all_mcp_toolsets())
+tools.extend(load_costaff_api_tools())
 tools.append(load_all_skills())
 
 # Instruction (placeholders resolved here)

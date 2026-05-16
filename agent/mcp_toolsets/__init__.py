@@ -1,20 +1,27 @@
-"""MCP toolset loader for the coding agent.
+"""MCP toolset loader for the coding agent — own MCP only, transport env-selectable.
 
-Loads:
-    1. The agent's own MCP server (URL from MCP_CODING_URL env var,
-       defaults to costaff-mcp-coding:8082). Authorization header is
-       attached using MCP_SECRET_KEY.
-    2. Any extra MCP servers configured via CODING_AGENT_MCP_URLS
-       (set by the CoStaff dashboard at deploy time).
+The agent connects to its OWN MCP server (costaff-mcp-coding) via a
+SINGLE McpToolset. Transport is chosen by MCP_TRANSPORT:
 
-Usage:
-    from mcp_toolsets import load_all_mcp_toolsets
-    toolsets = load_all_mcp_toolsets()  # list of McpToolset
+  - "sse" (DEFAULT): empirically race-free under to_a2a()+ADK1.33 ONLY
+    when there is exactly one McpToolset session. The streamable-http
+    anyio CancelScope race (google/adk-python#4454) does NOT occur on
+    SSE, but a 2nd concurrent SSE session reintroduces it (verified
+    2026-05-16: coding hard-failed at 2 sessions — get_tools raced and
+    its own tools `run_python_code`/`mkdir` vanished from the spec).
+  - "streamable-http": the future standard; switch back here once ADK
+    fixes #4454. Currently races under to_a2a — do not use in prod yet.
+
+The 4 shared manager-core tools (send_message_now / add_task_comment /
+move_to_shared / list_data_files) are NOT loaded here — they go via the
+costaff-core HTTP shim (agent/tools/costaff_api.py). That keeps coding
+off a 2nd MCP session and keeps DB/notifiers/tokens centralised in
+costaff-mcp. The old CODING_AGENT_MCP_URLS extra-MCP loop is removed on
+purpose: every extra entry was a 2nd+ concurrent session and the direct
+cause of the race.
 """
-import json
 import logging
 import os
-import re
 from typing import List
 
 from google.adk.tools.mcp_tool import McpToolset
@@ -25,78 +32,28 @@ from google.adk.tools.mcp_tool.mcp_session_manager import (
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MCP_URL = "http://costaff-mcp-coding:8082/mcp"
-
-
-def _server_params(url, headers=None):
-    """Build ServerParams with transport chosen by MCP_TRANSPORT (default sse).
-
-    SSE is race-free under to_a2a()+ADK1.33 (the streamable-http anyio
-    CancelScope race #4454 does NOT occur on SSE — verified 2026-05-16).
-    The URL's /mcp|/sse suffix is normalised to match the transport.
-    Set MCP_TRANSPORT=streamable-http to switch back once ADK fixes #4454.
-    """
-    t = os.getenv("MCP_TRANSPORT", "sse").strip().lower()
-    base = re.sub(r"/(mcp|sse)/?$", "", (url or "").rstrip("/"))
-    if t == "streamable-http":
-        return StreamableHTTPServerParams(url=base + "/mcp", headers=headers or {})
-    return SseConnectionParams(url=base + "/sse", headers=headers or {})
-
-
-def _connection_params(entry):
-    """Coerce an entry (string URL or dict) into transport-correct ServerParams."""
-    if isinstance(entry, str):
-        url, headers = entry, None
-    else:
-        url = entry.get("url", "")
-        headers = entry.get("headers") or None
-    if not url:
-        raise ValueError("MCP entry has no URL")
-    return _server_params(url, headers)
+_HOST = os.getenv("MCP_CODING_HOST", "costaff-mcp-coding:8082")
 
 
 def load_all_mcp_toolsets() -> List[McpToolset]:
-    """Build the agent's MCP toolset list from env configuration."""
-    toolsets: List[McpToolset] = []
-
-    # Own MCP — always connected, with bearer auth
-    own_url = os.getenv("MCP_CODING_URL", DEFAULT_MCP_URL)
+    """Return [own-MCP McpToolset] with transport selected by MCP_TRANSPORT."""
+    transport = os.getenv("MCP_TRANSPORT", "sse").strip().lower()
     mcp_token = os.getenv(
         "MCP_SECRET_KEY",
         "REDACTED",
     )
-    own_params = _server_params(
-        own_url, {"Authorization": f"Bearer {mcp_token}"}
-    )
-    toolsets.append(McpToolset(connection_params=own_params))
-    logger.info(f"Coding MCP: {own_params.url} (transport={os.getenv('MCP_TRANSPORT','sse')})")
+    headers = {"Authorization": f"Bearer {mcp_token}"} if mcp_token else {}
 
-    # Extra MCPs from CoStaff dashboard (e.g. costaff core MCP)
-    raw_extra = os.getenv("CODING_AGENT_MCP_URLS", "")
-    if raw_extra:
-        try:
-            extra_config = json.loads(raw_extra)
-        except json.JSONDecodeError:
-            logger.error(
-                "CODING_AGENT_MCP_URLS is not valid JSON, skipping extra MCPs"
-            )
-            return toolsets
+    if transport == "streamable-http":
+        url = os.getenv("MCP_CODING_URL", f"http://{_HOST}/mcp")
+        params = StreamableHTTPServerParams(url=url, headers=headers)
+        logger.warning(
+            f"Coding MCP transport=streamable-http ({url}) — races under "
+            f"to_a2a (#4454). Only use after ADK fixes it."
+        )
+    else:  # default: sse
+        url = os.getenv("MCP_CODING_SSE_URL", f"http://{_HOST}/sse")
+        params = SseConnectionParams(url=url, headers=headers)
+        logger.info(f"Coding MCP transport=sse ({url}) — race-free under to_a2a")
 
-        for name, entry in extra_config.items():
-            if isinstance(entry, dict) and not entry.get("enabled", True):
-                logger.info(f"Skipping disabled extra MCP: {name}")
-                continue
-            tool_filter = entry.get("tool_filter") if isinstance(entry, dict) else None
-            try:
-                toolsets.append(McpToolset(
-                    connection_params=_connection_params(entry),
-                    tool_filter=tool_filter,
-                ))
-                if tool_filter:
-                    logger.info(f"Added extra MCP: {name} (filtered to {len(tool_filter)} tools: {tool_filter})")
-                else:
-                    logger.info(f"Added extra MCP: {name} (no filter — all tools imported)")
-            except Exception as e:
-                logger.error(f"Failed to load extra MCP '{name}': {e}")
-
-    return toolsets
+    return [McpToolset(connection_params=params)]
