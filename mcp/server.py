@@ -66,6 +66,6 @@ if __name__ == "__main__":
     # ADK1.33 (streamable-http anyio CancelScope race #4454 does NOT
     # occur on SSE — verified 2026-05-16 on BA). MCP_TRANSPORT=
     # streamable-http to switch back once ADK fixes #4454.
-    _t = os.getenv("MCP_TRANSPORT", "sse")
+    _t = os.getenv("MCP_TRANSPORT", "streamable-http")
     logger.info(f"Starting Coding MCP server (transport={_t}, workspace={WORKSPACE})")
     mcp.run(transport=_t)

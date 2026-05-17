@@ -37,7 +37,7 @@ _HOST = os.getenv("MCP_CODING_HOST", "costaff-mcp-coding:8082")
 
 def load_all_mcp_toolsets() -> List[McpToolset]:
     """Return [own-MCP McpToolset] with transport selected by MCP_TRANSPORT."""
-    transport = os.getenv("MCP_TRANSPORT", "sse").strip().lower()
+    transport = os.getenv("MCP_TRANSPORT", "streamable-http").strip().lower()
     mcp_token = os.getenv(
         "MCP_SECRET_KEY",
         "REDACTED",
