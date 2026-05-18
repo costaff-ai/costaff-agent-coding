@@ -11,6 +11,11 @@ from mcp_toolsets import load_all_mcp_toolsets
 from models import selected_model
 from skills import load_all_skills
 from tools import load_costaff_api_tools
+from progress import (
+    before_model_callback,
+    before_tool_callback,
+    after_tool_callback,
+)
 
 # Tools = own-MCP toolset (single SSE session) + 4 shared core tools via
 # the costaff-core httpx shim + Skill toolset. Exactly ONE McpToolset →
@@ -37,6 +42,10 @@ coding_agent = LlmAgent(
         "so the viz-report agent can generate the final report."
     ),
     instruction=instruction,
+    # Code-driven live panel (same canonical progress.py as every agent).
+    before_model_callback=before_model_callback,
+    before_tool_callback=before_tool_callback,
+    after_tool_callback=after_tool_callback,
     tools=tools,
     sub_agents=[],
     # Leaf agent: A2A response auto-returns control to the manager.
