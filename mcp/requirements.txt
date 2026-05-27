@@ -1,5 +1,5 @@
-mcp[cli]
-fastmcp
-matplotlib
-ruff
-black
+mcp[cli]>=1.9.4
+fastmcp>=2.10.0
+matplotlib>=3.9.2
+ruff>=0.6.9
+black>=24.10.0
